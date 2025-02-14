@@ -1,15 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import Header from './Header/Header';
+import Footer from './Footer/Footer';
+import SideBar from './Component/SideBar';
 
 const App = () => {
-  return (
-    <div className='flex w-[100%] justify-center items-center text-center font-bold p-5 text-2xl bg-gray-200'>
-      <div>
-        세하니의 깃허브 블로그
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+    const toggleSidebar = () => {
+      setIsSidebarVisible(!isSidebarVisible);
+    };
+
+    return (
+      <div className='flex flex-col items-center'>
+        <Header toggleSidebar={toggleSidebar}/>
+        
+        <div className='flex'>
+          <SideBar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar}/>
+          <div className='flex flex-col w-full'>
+            <div className='w-screen bg-orange-300 h-[600px] z-0'></div>
+            <div className='z-10 w-screen h-64 bg-white'>sehan</div>
+          </div>
+        </div>
+
+        <Footer />
       </div>
-    </div>
-  );
+    );
 }
 
 export default App;
