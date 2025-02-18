@@ -14,10 +14,10 @@ const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
             </h2>
             <ul className="p-4 h-[80%] flex flex-col justify-evenly">
                 <li className="py-2">
-                    <button onClick={()=>{alert("아직 준비중입니다")}}>노션</button>
+                    <a href="https://github.com/HanseKim" target="_blank" rel="noopener noreferrer" className="w-full text-left">깃허브</a>
                 </li>
                 <li className="py-2">
-                    <button onClick={()=>{alert("아직 준비중입니다")}}>github</button>
+                    <button onClick={()=>{alert("아직 준비중입니다")}}>노션</button>
                 </li>
                 <li className="py-2">
                     <button onClick={()=>{alert("아직 준비중입니다")}}>투자 수익률</button>
