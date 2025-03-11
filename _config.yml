@@ -1,0 +1,13 @@
+title: "Hanse's Blog"
+description: "Welcome to my personal site!"
+author: "Hanse Kim"
+markdown: kramdown
+highlighter: rouge
+permalink: /:title
+paginate: 5
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-seo-tag
+theme: minima # 기본 테마, 나중에 바꿔도 됨
