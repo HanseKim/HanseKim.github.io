@@ -16,7 +16,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch('/chibbohae.json')
+    fetch('/blog.json')
       .then(response => response.json())
       .then(data => {
         setPosts(data);

@@ -27,7 +27,7 @@ const Detail: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('/chibbohae.json') // JSON 통합 데이터
+    fetch('/blog.json') // JSON 통합 데이터
       .then(response => response.json())
       .then(data => {
         const foundPost = data.find((item: Post) => item.id.toString() === id);
