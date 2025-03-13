@@ -4,7 +4,7 @@ import Header from './Header/Header';
 import Footer from './Footer/Footer';
 import Home from './Component/Home';
 import SideBar from './Component/SideBar';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Detail from './Component/Detail';
 
 const App = () => {
@@ -15,7 +15,7 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className='flex flex-col items-center'>
         <Header toggleSidebar={toggleSidebar}/>
         <div className='flex flex-col'>
@@ -27,7 +27,7 @@ const App = () => {
         </div>
         <Footer />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
