@@ -1,35 +1,61 @@
 [
   {
-    "id" : 0,
-    "title" : "페이지 소개",
+    "id": 0,
+    "title": "포트폴리오 페이지 (React TypeScript)",
     "date": "25.03.13",
     "bgcolor": "gray",
     "sections": [
       {
         "type": "text",
-        "content" : "이 페이지는 React typescript 으로 만들어졌습니다."
+        "content": "이 페이지는 React와 TypeScript를 사용하여 직접 개발한 개인 포트폴리오 웹사이트입니다. 프로젝트 소개, 깃허브, 노션 등 다양한 작업물을 한눈에 확인할 수 있도록 구성했습니다."
       },
       {
         "type": "heading",
-        "content": "화면 구성"
+        "content": "🖥️ 주요 화면 구성"
       },
       {
-        "type":"list",
-        "content":[
-          "홈 (프로젝트)",
-          "프로젝트 상세",
-          "깃허브 주소",
-          "노션 주소",
-          "자동매매 수익률 (아직 미완성)"
+        "type": "list",
+        "content": [
+          "홈 (진행한 프로젝트 전체 보기)",
+          "프로젝트 상세 페이지 (기술 스택, 주요 기능, 개발 후기)",
+          "깃허브 주소 바로가기",
+          "노션 포트폴리오 바로가기",
+          "자동매매 수익률 (기능 구현 예정)"
         ]
       },
       {
         "type": "heading",
-        "content": "파일 구조 (편의를 위해 src 파일만)"
+        "content": "🛠️ 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "React + TypeScript (프론트엔드)",
+          "모듈화된 컴포넌트 설계 (Card, Detail, Home, SideBar 등)",
+          "Context API (전역 상태 관리)",
+          "Styled Components (디자인 일부)",
+          "Vercel 배포 예정"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "✨ 특별한 점"
+      },
+      {
+        "type": "list",
+        "content": [
+          "다양한 프로젝트를 카드 형식으로 한눈에 보기 쉽게 구성",
+          "직접 구현한 SideBar와 Header로 일관된 UI 제공",
+          "향후 자동매매 수익률 시각화 기능 추가 예정 (그래프, 통계 등)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "📂 파일 구조 (src 기준)"
       },
       {
         "type": "text",
-        "content": "📦 src\n ┣ 📂 colorUtils\n ┃ ┗ 📜 Color.ts\n ┣ 📂 Component\n ┃ ┣ 📜 Card.tsx\n ┃ ┣ 📜 Detail.tsx\n ┃ ┣ 📜 Home.tsx\n ┃ ┗ 📜 SideBar.tsx\n ┣ 📂 Footer\n ┃ ┗ 📜 Footer.tsx\n ┣ 📂 Header\n ┃ ┗ 📜 Header.tsx\n ┣ 📂 image\n ┣ 📜 App.css\n ┣ 📜 App.test.tsx\n ┣ 📜 App.tsx\n ┣ 📜 index.css\n ┣ 📜 index.tsx\n ┣ 📜 logo.svg\n ┣ 📜 react-app-env.d.ts\n ┣ 📜 reportWebVitals.ts\n ┗ 📜 setupTests.ts\n"
+        "content": "📦 src\n ┣ 📂 colorUtils   (컬러 테마 관리)\n ┃ ┗ 📜 Color.ts\n ┣ 📂 Component   (화면 구성 컴포넌트)\n ┃ ┣ 📜 Card.tsx   (프로젝트 카드 컴포넌트)\n ┃ ┣ 📜 Detail.tsx   (프로젝트 상세 정보 컴포넌트)\n ┃ ┣ 📜 Home.tsx   (메인 페이지)\n ┃ ┗ 📜 SideBar.tsx   (사이드 메뉴)\n ┣ 📂 Footer   (푸터)\n ┃ ┗ 📜 Footer.tsx\n ┣ 📂 Header   (헤더)\n ┃ ┗ 📜 Header.tsx\n ┣ 📂 image   (이미지 리소스)\n ┣ 📜 App.css\n ┣ 📜 App.test.tsx\n ┣ 📜 App.tsx\n ┣ 📜 index.css\n ┣ 📜 index.tsx\n ┣ 📜 logo.svg\n ┣ 📜 react-app-env.d.ts\n ┣ 📜 reportWebVitals.ts\n ┗ 📜 setupTests.ts\n"
       }
     ]
   },
