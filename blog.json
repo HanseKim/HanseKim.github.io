@@ -77,7 +77,7 @@
         "type": "list",
         "content": [
           "FrontEnd: React, TypeScript",
-          "BackEnd: Node.js, Express",
+          "BackEnd: Spring, fast-api (다른 팀원들 파트)",
           "DB: MySQL",
           "JWT 토큰 기반 인증",
           "Axios (apiClient 모듈화)",
@@ -142,7 +142,6 @@
         "type": "list",
         "content": [
           "React TypeScript로 실제 서비스 수준의 웹 개발 경험",
-          "Node.js, Express 백엔드 및 MySQL 데이터베이스 직접 구축",
           "JWT 인증과 WebSocket 통신을 통한 보안/실시간 기능 학습",
           "프론트엔드-백엔드 API 통신 (Axios 모듈화)로 코드 관리 수월",
           "파트너/클라이언트 역할 분리로 복잡한 권한 관리 처리",
