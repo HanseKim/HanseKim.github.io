@@ -52,7 +52,7 @@ const Home: React.FC = () => {
     <div className="flex flex-col items-center w-screen min-h-screen bg-gradient-to-b from-orange-50 to-orange-100">
       {/* 헤더 섹션 */}
       <div className="w-full shadow-lg bg-gradient-to-r from-orange-400 to-orange-300">
-        <div className="flex flex-col items-center px-4 py-16 md:py-24">
+        <div className="flex flex-col items-center px-4 py-16 md:py-32">
           <motion.h1 
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 10, opacity: 1 }}

@@ -1,57 +1,160 @@
 [
   {
-    "id" : 0,
-    "title" : "페이지 소개",
-    "date": "2025-03-13",
+    "id": 0,
+    "title": "포트폴리오 페이지 (React TypeScript)",
+    "date": "25.03.13",
     "bgcolor": "gray",
     "sections": [
       {
         "type": "text",
-        "content" : "이 페이지는 React typescript 으로 만들어졌습니다."
+        "content": "이 페이지는 React와 TypeScript를 사용하여 직접 개발한 개인 포트폴리오 웹사이트입니다. 프로젝트 소개, 깃허브, 노션 등 다양한 작업물을 한눈에 확인할 수 있도록 구성했습니다."
       },
       {
         "type": "heading",
-        "content": "화면 구성"
+        "content": "🖥️ 주요 화면 구성"
       },
       {
-        "type":"list",
-        "content":[
-          "홈 (프로젝트 설명)",
-          "깃허브 주소",
-          "노션 주소",
-          "자동매매 수익률 (아직 미완성)"
+        "type": "list",
+        "content": [
+          "홈 (진행한 프로젝트 전체 보기)",
+          "프로젝트 상세 페이지 (기술 스택, 주요 기능, 개발 후기)",
+          "깃허브 주소 바로가기",
+          "노션 포트폴리오 바로가기",
+          "자동매매 수익률 (기능 구현 예정)"
         ]
       },
       {
         "type": "heading",
-        "content": "파일 구조 (편의를 위해 src 파일만)"
+        "content": "🛠️ 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "React + TypeScript (프론트엔드)",
+          "모듈화된 컴포넌트 설계 (Card, Detail, Home, SideBar 등)",
+          "Context API (전역 상태 관리)",
+          "Styled Components (디자인 일부)",
+          "Vercel 배포 예정"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "✨ 특별한 점"
+      },
+      {
+        "type": "list",
+        "content": [
+          "다양한 프로젝트를 카드 형식으로 한눈에 보기 쉽게 구성",
+          "직접 구현한 SideBar와 Header로 일관된 UI 제공",
+          "향후 자동매매 수익률 시각화 기능 추가 예정 (그래프, 통계 등)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "📂 파일 구조 (src 기준)"
       },
       {
         "type": "text",
-        "content": "📦 src\n ┣ 📂 colorUtils\n ┃ ┗ 📜 Color.ts\n ┣ 📂 Component\n ┃ ┣ 📜 Card.tsx\n ┃ ┣ 📜 Detail.tsx\n ┃ ┣ 📜 Home.tsx\n ┃ ┗ 📜 SideBar.tsx\n ┣ 📂 Footer\n ┃ ┗ 📜 Footer.tsx\n ┣ 📂 Header\n ┃ ┗ 📜 Header.tsx\n ┣ 📂 image\n ┣ 📜 App.css\n ┣ 📜 App.test.tsx\n ┣ 📜 App.tsx\n ┣ 📜 index.css\n ┣ 📜 index.tsx\n ┣ 📜 logo.svg\n ┣ 📜 react-app-env.d.ts\n ┣ 📜 reportWebVitals.ts\n ┗ 📜 setupTests.ts\n"
+        "content": "📦 src\n ┣ 📂 colorUtils   (컬러 테마 관리)\n ┃ ┗ 📜 Color.ts\n ┣ 📂 Component   (화면 구성 컴포넌트)\n ┃ ┣ 📜 Card.tsx   (프로젝트 카드 컴포넌트)\n ┃ ┣ 📜 Detail.tsx   (프로젝트 상세 정보 컴포넌트)\n ┃ ┣ 📜 Home.tsx   (메인 페이지)\n ┃ ┗ 📜 SideBar.tsx   (사이드 메뉴)\n ┣ 📂 Footer   (푸터)\n ┃ ┗ 📜 Footer.tsx\n ┣ 📂 Header   (헤더)\n ┃ ┗ 📜 Header.tsx\n ┣ 📂 image   (이미지 리소스)\n ┣ 📜 App.css\n ┣ 📜 App.test.tsx\n ┣ 📜 App.tsx\n ┣ 📜 index.css\n ┣ 📜 index.tsx\n ┣ 📜 logo.svg\n ┣ 📜 react-app-env.d.ts\n ┣ 📜 reportWebVitals.ts\n ┗ 📜 setupTests.ts\n"
       }
     ]
   },
   {
     "id": 1,
     "title": "취뽀해",
-    "date": "2023-02-25",
+    "date": "24.02.25 ~ 진행중",
     "bgcolor": "blue",
     "sections": [
       {
         "type": "text",
-        "content": "이 글은 취업에 관한 내용입니다."
+        "content": "취업 준비생과 파트너(멘토)를 연결해주는 플랫폼입니다. 채팅, 상담, 취업수기 공유 등 다양한 소통 기능을 제공합니다."
+      },
+      {
+        "type": "heading",
+        "content": "🛠️ 기술 스택"
       },
       {
         "type": "list",
-        "content": ["포인트 1", "포인트 2", "포인트 3"]
+        "content": [
+          "FrontEnd: React, TypeScript",
+          "BackEnd: Node.js, Express",
+          "DB: MySQL",
+          "JWT 토큰 기반 인증",
+          "Axios (apiClient 모듈화)",
+          "WebSocket (채팅 실시간 통신)",
+          "Figma 디자인"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "💡 주요 기능"
+      },
+      {
+        "type": "list",
+        "content": [
+          "회원가입 / 로그인 (JWT 인증)",
+          "마이페이지: 사용자 정보 확인, 수정, 로그아웃",
+          "파트너/클라이언트 역할 구분 (화면 다르게)",
+          "채팅 (WebSocket)",
+          "상담 신청 및 수락",
+          "파트너: 일주일 상담 예약 캘린더, 수락된 상담 목록, 회사 정보 등록, 취업수기 작성, 리뷰 관리",
+          "클라이언트: 인기 취업수기, 인기 파트너 목록, 상담 신청, 최근 본 파트너, 리뷰 작성",
+          "전화 기능 (미완성), 전화 후 리뷰 작성 (미완성)",
+          "검색/탐색 기능 (미완성)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "✨ 프로젝트의 특별한 점"
+      },
+      {
+        "type": "list",
+        "content": [
+          "파트너-클라이언트 역할에 따라 다른 메인 화면과 기능 제공",
+          "일주일 상담 일정 캘린더 시각화 (파트너)",
+          "상담 내역 카드로 한눈에 보기 쉽게 디자인",
+          "취업수기, 리뷰 등 커뮤니티 요소 포함 (작성/조회)",
+          "JWT 인증 및 API 통신 모듈화(apiClient)로 유지보수와 확장성 고려",
+          "WebSocket을 활용한 실시간 채팅 구현",
+          "전화 및 리뷰, 검색 기능 등 확장 예정"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🚧 현재 진행 상황"
+      },
+      {
+        "type": "list",
+        "content": [
+          "파트너/클라이언트 기본 로그인, 회원가입, 역할 분리 완료",
+          "상담 목록 카드, 캘린더 구현 (파트너)",
+          "채팅 기본 구현 (WebSocket)",
+          "파트너 마이페이지(회사 정보, 취업수기) 기본 구조 완성",
+          "클라이언트 인기 취업수기, 파트너 리스트 카드 완성",
+          "전화 기능, 리뷰, 검색 기능은 DB 및 API 미완성 (진행 예정)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🔑 개발 과정에서 얻은 것"
+      },
+      {
+        "type": "list",
+        "content": [
+          "React TypeScript로 실제 서비스 수준의 웹 개발 경험",
+          "Node.js, Express 백엔드 및 MySQL 데이터베이스 직접 구축",
+          "JWT 인증과 WebSocket 통신을 통한 보안/실시간 기능 학습",
+          "프론트엔드-백엔드 API 통신 (Axios 모듈화)로 코드 관리 수월",
+          "파트너/클라이언트 역할 분리로 복잡한 권한 관리 처리",
+          "UX 중심의 카드/캘린더 UI 직접 제작"
+        ]
       }
     ]
-  },
+  },  
   {
     "id": 2,
     "title": "너의 하루는",
-    "date": "2025-02-24",
+    "date": "25.01.13 ~ 25.02.24",
     "bgcolor": "pink",
     "sections": [
       {

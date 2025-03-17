@@ -6,8 +6,12 @@ type HeaderProps={
 }
 const Header:React.FC<HeaderProps> = ({toggleSidebar}) =>{
     return <div className='fixed z-30 flex justify-center p-4 text-lg font-bold t-0'>
-        <img src={HanLogo} className='w-20 h-20 bg-white cursor-pointer rounded-3xl' alt="Han" 
-            onClick={toggleSidebar}/>
+        <img 
+            src={HanLogo} 
+            className='bg-white cursor-pointer w-14 h-14 sm:w-20 sm:h-20 rounded-3xl' 
+            alt="Han" 
+            onClick={toggleSidebar}
+            />
     </div>
 }
 
