@@ -73,14 +73,19 @@ const Detail: React.FC = () => {
                                 </h2>
                             );
                         } else if (section.type === 'image') {
+                            // 이미지가 배열인 경우와 문자열인 경우 모두 처리
+                            const imagePaths = Array.isArray(section.content) ? section.content : [section.content];
                             return (
-                                <div key={index} className="flex justify-center my-6">
-                                    <img 
-                                        src={`/${section.content}`} 
-                                        alt={`${post.title} 스크린샷`}
-                                        className="max-w-full h-auto rounded-lg shadow-md"
-                                        style={{ maxWidth: '300px' }}
-                                    />
+                                <div key={index} className="flex flex-wrap gap-4 justify-center my-6">
+                                    {imagePaths.map((imagePath, imgIndex) => (
+                                        <img 
+                                            key={imgIndex}
+                                            src={`/${imagePath}`} 
+                                            alt={`${post.title} 스크린샷 ${imgIndex + 1}`}
+                                            className="max-w-full h-auto rounded-lg shadow-md"
+                                            style={{ maxWidth: '300px' }}
+                                        />
+                                    ))}
                                 </div>
                             );
                         } else {
