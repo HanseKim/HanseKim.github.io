@@ -296,7 +296,7 @@
       {
         "type": "list",
         "content": [
-          "FrontEnd: React Native (Expo)",
+          "FrontEnd: React Native (CLI)",
           "BackEnd: Node.js, Express",
           "DB: MySQL (Workbench)",
           "JWT 토큰 기반 인증",
