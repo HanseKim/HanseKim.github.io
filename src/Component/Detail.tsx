@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ColorSet, getColorSet, defaultColorSet } from '../colorUtils/Color';
+import { ColorSet, getColorSet } from '../colorUtils/Color';
 
 interface Section {
     type: 'text' | 'list' | 'heading' | 'image';
