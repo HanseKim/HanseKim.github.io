@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
+    "@capacitor/ios": "^7.4.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -27,7 +32,12 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "clean": "gh-pages-clean"
+    "clean": "gh-pages-clean",
+    "build:app": "npm run build && npx cap sync",
+    "android": "npx cap run android",
+    "ios": "npx cap run ios",
+    "open:android": "npx cap open android",
+    "open:ios": "npx cap open ios"
   },
   "eslintConfig": {
     "extends": [
