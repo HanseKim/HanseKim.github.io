@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.e9d0434b.css",
+    "main.js": "/static/js/main.f529b795.js",
+    "static/js/453.d84d3021.chunk.js": "/static/js/453.d84d3021.chunk.js",
+    "static/media/HanLogo.png": "/static/media/HanLogo.22aae02e8cb23a665869.png",
+    "index.html": "/index.html",
+    "main.e9d0434b.css.map": "/static/css/main.e9d0434b.css.map",
+    "main.f529b795.js.map": "/static/js/main.f529b795.js.map",
+    "453.d84d3021.chunk.js.map": "/static/js/453.d84d3021.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e9d0434b.css",
+    "static/js/main.f529b795.js"
+  ]
+}
