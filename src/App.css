@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+/* 모이GO 커스텀 주황색 */
+.bg-moigo-light {
+  background-color: #fff7ed;
+}
+
+.bg-moigo-medium {
+  background-color: #fed7aa;
+}
+
+.bg-moigo-dark {
+  background-color: #fdba74;
+}
+
+.text-moigo {
+  color: #FF6B00;
+}
+
+.border-moigo {
+  border-color: #FF6B00;
+}

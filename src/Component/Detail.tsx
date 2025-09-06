@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ColorSet, getColorSet, defaultColorSet } from '../colorUtils/Color';
 
 interface Section {
-    type: 'text' | 'list' | 'heading';
+    type: 'text' | 'list' | 'heading' | 'image';
     content: string | string[];
 }
 
@@ -41,7 +41,7 @@ const Detail: React.FC = () => {
 
     if (!post) {
         return (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex justify-center items-center h-screen">
             <p className="text-lg text-gray-500">포스트를 찾을 수 없습니다.</p>
         </div>
         );
@@ -55,7 +55,7 @@ const Detail: React.FC = () => {
                 <div className="space-y-6 text-lg leading-relaxed text-gray-700">
                     {post.sections.map((section, index) => {
                         if (section.type === 'text') {
-                            return <pre key={index} className="text-gray-700 break-words whitespace-pre-wrap">
+                            return <pre key={index} className="text-gray-700 whitespace-pre-wrap break-words">
                                     {section.content}
                                 </pre>
                         } else if (section.type === 'list' && Array.isArray(section.content)) {
@@ -71,6 +71,17 @@ const Detail: React.FC = () => {
                                 <h2 key={index} className={`text-2xl font-semibold ${colorSet.text}`}>
                                 {section.content}
                                 </h2>
+                            );
+                        } else if (section.type === 'image') {
+                            return (
+                                <div key={index} className="flex justify-center my-6">
+                                    <img 
+                                        src={`/${section.content}`} 
+                                        alt={`${post.title} 스크린샷`}
+                                        className="max-w-full h-auto rounded-lg shadow-md"
+                                        style={{ maxWidth: '300px' }}
+                                    />
+                                </div>
                             );
                         } else {
                             return null;

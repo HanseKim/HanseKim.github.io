@@ -18,6 +18,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getColorSet } from '../colorUtils/Color';
+import moigoLogo from '../image/moigo_logo.png';
 
 interface CardProps {
   id: number;
@@ -35,6 +36,7 @@ const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
       '취뽀해': '💼',
       '너의 하루는': '✏️',
       '냉장고를 부탁해': '🍽️',
+      'MoiGO': moigoLogo,
     };
     
     return iconMap[title] || '📝';
@@ -43,12 +45,20 @@ const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
   return (
     <Link to={`/detail/${id}`} className="block transition-transform duration-300 hover:scale-105">
       <div className={`w-full h-full p-1 overflow-hidden rounded-2xl shadow-md ${colorSet.bgLight} hover:shadow-lg`}>
-        <div className={`w-full h-full p-5 rounded-xl bg-white`}>
+        <div className={`p-5 w-full h-full bg-white rounded-xl`}>
           <div className="flex flex-col h-full">
             {/* 아이콘 + 날짜 */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex justify-between items-center mb-4">
               <div className={`flex items-center justify-center w-12 h-12 text-xl rounded-full ${colorSet.bgMedium} ${colorSet.text}`}>
-                {getIcon(title)}
+                {typeof getIcon(title) === 'string' && getIcon(title).length === 2 ? (
+                  getIcon(title)
+                ) : (
+                  <img 
+                    src={getIcon(title)} 
+                    alt={`${title} 로고`}
+                    className="object-contain w-6 h-6"
+                  />
+                )}
               </div>
               <p className={`text-sm font-medium ${colorSet.text}`}>{date}</p>
             </div>
@@ -60,7 +70,7 @@ const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
             <div className="mt-auto">
               <div className={`flex items-center justify-center w-full p-2 mt-4 font-medium rounded-lg ${colorSet.bgMedium} ${colorSet.text}`}>
                 자세히 보기
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>

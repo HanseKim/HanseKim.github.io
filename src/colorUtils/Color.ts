@@ -57,6 +57,13 @@ export const colorSets: Record<string, ColorSet> = {
     bgDark: 'bg-gray-200',
     text: 'text-gray-500',
     border: 'border-gray-300',
+  },
+  orange: {
+    bgLight: 'bg-moigo-light',
+    bgMedium: 'bg-moigo-medium',
+    bgDark: 'bg-moigo-dark',
+    text: 'text-moigo',
+    border: 'border-moigo',
   }
 };
 
