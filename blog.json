@@ -357,5 +357,80 @@
         ]
       }
     ]
+  },
+  {
+    "id": 4,
+    "title": "카테캠 UniSchedule",
+    "date": "25.09 ~ 25.11",
+    "bgcolor": "green",
+    "sections": [
+      {
+        "type": "text",
+        "content": "UniSchedule은 대학생 팀 프로젝트, 수업, 개인 일정을 한 곳에서 관리할 수 있는 웹 애플리케이션입니다. 에브리타임 시간표와 Google Calendar를 연동해 자동으로 데이터를 가져오고, 팀원들의 가용 시간을 분석해 최적의 팀 회의 시간을 추천합니다. 배포 URL: https://unischedule.vercel.app"
+      },
+      {
+        "type": "heading",
+        "content": "📘 프로젝트 개요"
+      },
+      {
+        "type": "text",
+        "content": "팀 프로젝트와 수업, 개인 일정이 뒤섞이는 대학생들을 위해 일정 통합 관리, 가용 시간 분석, 외부 캘린더 연동을 한 번에 제공하도록 설계했습니다."
+      },
+      {
+        "type": "heading",
+        "content": "⚙️ 주요 기능"
+      },
+      {
+        "type": "list",
+        "content": [
+          "📆 달력 기반 일정 관리: 월/주 단위 확인, 강의·과제·팀 회의 일정 시각화",
+          "🤝 팀 일정 통합 관리: 팀별 일정 자동 분류, 역할 표시, 등록 즉시 팀 캘린더 반영",
+          "🧠 팀원 가용성 분석 & 일정 추천: 최소 요구 시간(15~120분) 기준 겹치지 않는 시간대 자동 추천 및 일정 생성",
+          "🔄 외부 서비스 연동: 에브리타임 시간표 자동 등록, Google Calendar API 양방향 동기화",
+          "⏰ D-Day & 알림: 주요 일정 D-day 표시 및 리마인드",
+          "📱 반응형 UI: Tailwind CSS 기반 모바일·데스크톱 최적화"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧠 개발 포인트 및 역할"
+      },
+      {
+        "type": "list",
+        "content": [
+          "팀원별 일정 데이터를 배열로 매핑하고 Boolean 연산으로 공통 비어있는 시간대 추출",
+          "추천 시간대 선택 시 API 호출로 팀 캘린더에 일정 객체 자동 생성",
+          "TypeScript로 일정 객체 타입 정의 및 안정성 강화",
+          "React Hooks로 일정 상태 관리 및 비동기 UI 업데이트",
+          "Tailwind CSS로 가시성과 사용성을 높인 인터랙티브 UI 구현"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "💡 성과 및 배운 점"
+      },
+      {
+        "type": "list",
+        "content": [
+          "가용 시간 계산 알고리즘을 설계하며 시간 복잡도와 반응성 균형을 도출",
+          "팀 협업형 캘린더를 사용자 중심 UX로 구현",
+          "비동기 API 연동과 상태 동기화, 렌더링 최적화를 통해 프론트엔드 구조 설계 역량 강화"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧰 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "Frontend: React VITE, TypeScript, Tailwind CSS",
+          "API 연동: Google Calendar API, Everytime API",
+          "배포: Vercel",
+          "주요 기능: 팀원 가용성 분석, 일정 추천 알고리즘, 실시간 일정 추가",
+          "기타: Responsive Design, Component-based Architecture, Custom Hook"
+        ]
+      }
+    ]
   }
 ]
