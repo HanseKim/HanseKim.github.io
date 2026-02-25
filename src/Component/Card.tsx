@@ -19,6 +19,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { getColorSet } from '../colorUtils/Color';
 import moigoLogo from '../image/moigo_logo.png';
+import realviewLogo from '../image/realview_logo.svg';
 
 interface CardProps {
   id: number;
@@ -37,6 +38,7 @@ const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
       '너의 하루는': '✏️',
       '냉장고를 부탁해': '🍽️',
       'MoiGO': moigoLogo,
+      '리얼뷰(WebView)': realviewLogo,
     };
     
     return iconMap[title] || '📝';

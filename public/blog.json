@@ -432,6 +432,103 @@
         ]
       }
     ]
+  },
+  {
+    "id": 5,
+    "title": "리얼뷰(WebView)",
+    "date": "25.01 ~ 25.02",
+    "bgcolor": "realview",
+    "sections": [
+      {
+        "type": "text",
+        "content": "리얼뷰는 기존 앱 화면을 React 기반 WebView로 재구현한 프로젝트입니다. 토스 Granite 환경에서 동작하는 앱인토스 전용 웹뷰 UI 레이어로, Flutter 앱과 백엔드 사이에서 리스트·피드·프로필·가게 상세·리뷰 상세 화면을 담당합니다."
+      },
+      {
+        "type": "heading",
+        "content": "📱 앱 화면"
+      },
+      {
+        "type": "image",
+        "content": [
+          "realview/realview1.png",
+          "realview/realview2.png",
+          "realview/realview3.png",
+          "realview/realview4.png"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "📘 프로젝트 개요"
+      },
+      {
+        "type": "text",
+        "content": "기존 네이티브 화면 구조는 그대로 두고, 데이터가 자주 변경되는 화면만 WebView로 옮겨 UI 업데이트 속도와 A/B 테스트 유연성을 높인 프로젝트입니다. Flutter 앱은 네비게이션·네이티브 기능을 맡고, WebView는 리스트·피드·프로필·리뷰·가게 상세처럼 실험과 수정이 잦은 화면을 React로 구현했습니다."
+      },
+      {
+        "type": "heading",
+        "content": "⚙️ 주요 기능"
+      },
+      {
+        "type": "list",
+        "content": [
+          "리스트: 랭킹/스크랩/친구 탭, 카테고리·가격대·태그·정렬·친구 검색, 무한 스크롤 가게 리스트",
+          "스크랩 연동: 리스트·가게 상세·진행도(progress) 상태 동기화",
+          "홈(피드): 카테고리 필터 + 인스타그램 스타일 무한 스크롤 피드, Pull-to-refresh로 첫 페이지부터 재조회",
+          "가게 상세/리뷰 상세: 가게 정보·사진·리뷰 탭 API 연동, 리뷰 상세 및 댓글 페이지네이션",
+          "지도/브릿지 액션: Kakao Map 연동, 지도 보기·전화 걸기·평가 남기기 등 Flutter 브릿지 액션 처리",
+          "프로필/소셜: 내/친구 프로필, 리뷰·사진·댓글·리스트 탭 UI 및 API 연동",
+          "팔로우: 팔로워/팔로잉 리스트 무한 스크롤, 팔로우/언팔로우 토글"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧠 개발 포인트 및 역할"
+      },
+      {
+        "type": "list",
+        "content": [
+          "FSD(Feature-Sliced Design) 아키텍처 적용: app / pages / features / entities / widgets / shared로 분리해 hooks·API·페이지 뒤섞임 문제 개선",
+          "React Query 서버 상태/캐시 전략 설계: progress, stores, storeDetail, feed, myProfile, friendProfile 등 도메인별 쿼리 키 설계 및 Notion 문서화",
+          "상태 변경 액션(스크랩, 리뷰 작성, 로그인, 팔로우)마다 invalidateQueries / resetQueries 타이밍 정의",
+          "useInfiniteQuery + react-intersection-observer(useInView)로 무한 스크롤 구현, 실제 스크롤/터치/입력 이후에만 Observer 활성화해 불필요한 프리패치 방지",
+          "모바일 Pull-to-refresh 훅(usePullToRefresh) 작성으로 자연스러운 새로고침 UX 구현",
+          "Flutter–WebView 브릿지(AppBridge) 메시지 핸들러 구현 및 Kakao Map 배포 환경 이슈(환경변수 설정) 추적·해결",
+          "핵심 비즈니스 훅/유틸에 대한 기본 테스트 코드 도입(리액션, 필터링, 상태 변환 로직 등)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "💡 성과 및 배운 점"
+      },
+      {
+        "type": "list",
+        "content": [
+          "리스트·피드·프로필·가게 상세·리뷰 상세를 하나의 사용자 플로우로 묶어 도메인 단위로 설계하면서, 화면 단위가 아닌 기능 단위로 사고하는 습관을 얻음",
+          "React Query 쿼리 키와 무효화 타이밍을 직접 설계·문서화하며 서버 상태 관리와 UX(갱신 타이밍, 로딩/에러 처리)의 관계를 더 깊게 이해함",
+          "WebView–Flutter–Backend가 얽힌 환경에서 버튼 클릭 → 브릿지 메시지 → 네이티브 동작 → WebView 갱신까지 전체 흐름을 추적·디버깅하는 경험을 쌓음",
+          "디자인/기능 QA 피드백을 여러 차례 반영하며 \"동작하는 것\"을 넘어서 실제 사용자의 경험과 디테일을 보는 시야를 키움"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧰 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "Frontend: React, TypeScript, Vite",
+          "상태 관리: Zustand",
+          "서버 상태/캐시: React Query(useQuery, useInfiniteQuery, invalidateQueries, resetQueries)",
+          "아키텍처: Feature-Sliced Design(FSD)",
+          "UI/디자인 시스템: tailwindCSS + @toss/tds-mobile (Granite – 토스 WebView UI)",
+          "기타: react-intersection-observer(무한 스크롤 트리거), Kakao Map Web SDK, Axios 기반 apiClient와 DTO 타입 정의, WebView–Flutter 브릿지(AppBridge) 통신, 일부 핵심 로직 테스트 코드(단위/훅 테스트)"
+        ]
+      },
+      {
+        "type": "text",
+        "content": "※ 이 페이지에 사용된 앱 화면 이미지 및 UI는 디라이브 주식회사(D-Rive)의 자산이며, 포트폴리오 용도로만 사용했습니다."
+      }
+    ]
   }
 ]
 

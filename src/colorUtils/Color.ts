@@ -64,6 +64,13 @@ export const colorSets: Record<string, ColorSet> = {
     bgDark: 'bg-moigo-dark',
     text: 'text-moigo',
     border: 'border-moigo',
+  },
+  realview: {
+    bgLight: 'bg-realview-light',
+    bgMedium: 'bg-realview-medium',
+    bgDark: 'bg-realview-dark',
+    text: 'text-realview-dark',
+    border: 'border-realview',
   }
 };
 

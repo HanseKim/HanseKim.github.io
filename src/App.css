@@ -57,3 +57,24 @@
 .border-moigo {
   border-color: #FF6B00;
 }
+
+/* 리얼뷰 주황색 */
+.bg-realview-light {
+  background-color: #FFF3EE;
+}
+
+.bg-realview-medium{
+  background-color: #FFF3EE;
+}
+
+.bg-realview-dark {
+  background-color: #FF6D4D;
+}
+
+.text-realview-dark {
+  color: #FF6D4D;
+}
+/* 리얼뷰 보더 색상 */
+.border-realview {
+  border-color: #FF6D4D;
+}
