@@ -2,7 +2,7 @@
   {
     "id": 0,
     "title": "페이지 소개",
-    "date": "25.03.13",
+    "date": "",
     "bgcolor": "gray",
     "sections": [
       {
@@ -62,7 +62,7 @@
   {
     "id": 3,
     "title": "MoiGO",
-    "date": "25.06 ~ 진행중",
+    "date": "25.06 ~ 25.08",
     "bgcolor": "orange",
     "sections": [
       {
@@ -191,7 +191,7 @@
   {
     "id": 1,
     "title": "취뽀해",
-    "date": "24.02.25 ~ ",
+    "date": "25.02~ 중단",
     "bgcolor": "blue",
     "sections": [
       {
@@ -436,7 +436,7 @@
   {
     "id": 5,
     "title": "리얼뷰(WebView)",
-    "date": "25.01 ~ 25.02",
+    "date": "26.01 ~ 26.02",
     "bgcolor": "realview",
     "sections": [
       {

@@ -23,11 +23,14 @@ const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
                     <a href="https://github.com/HanseKim" target="_blank" rel="noopener noreferrer" className="w-full text-left">깃허브</a>
                 </li>
                 <li className="py-2">
+                    <a href="https://lavish-carpet-8f6.notion.site/2025-2290070cb764806bb49cd7d51904ffcd" target="_blank" rel="noopener noreferrer" className="w-full text-left">노션 포트폴리오</a>
+                </li>
+                {/* <li className="py-2">
                     <a href="https://lavish-carpet-8f6.notion.site/25-03-18-1ba0070cb764804ea523e6dd9d478bdb?pvs=4" target="_blank" rel="noopener noreferrer" className="w-full text-left">백준 노션 정리</a>
                 </li>
                 <li className="py-2">
                     <a href="https://btc-production-9f7f.up.railway.app/" target="_blank" rel="noopener noreferrer">자동매매</a>
-                </li>
+                </li> */}
             </ul>
       </div>)
 }

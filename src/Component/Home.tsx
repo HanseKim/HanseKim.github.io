@@ -14,12 +14,23 @@ const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const parseStartDate = (dateStr: string): number => {
+    const start = dateStr.split('~')[0].trim();
+    const parts = start.split('.');
+    const year = parseInt(parts[0]) + 2000;
+    const month = parseInt(parts[1]) || 1;
+    const day = parseInt(parts[2]) || 1;
+    return year * 10000 + month * 100 + day;
+  };
+
   useEffect(() => {
     setIsLoading(true);
     fetch('/blog.json')
       .then(response => response.json())
       .then(data => {
-        setPosts(data);
+        const filtered = [...data]
+          .sort((a: Post, b: Post) => parseStartDate(b.date) - parseStartDate(a.date));
+        setPosts(filtered);
         setIsLoading(false);
       })
       .catch(error => {
