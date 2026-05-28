@@ -180,6 +180,7 @@ jobs:
             const VULN_KEYWORDS = {
               'xss':                  ['innerHTML', 'dangerouslySetInnerHTML', 'document.write', 'outerHTML', 'eval(', 'insertAdjacentHTML'],
               'cross-site scripting': ['innerHTML', 'dangerouslySetInnerHTML', 'document.write', 'outerHTML', 'eval('],
+              'code injection':       ['eval(', 'new Function(', 'setTimeout(', 'setInterval(', 'execScript'],
               'sql injection':        ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'executeQuery', 'createQuery', 'createNativeQuery', 'prepareStatement'],
               'sql':                  ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'executeQuery'],
               'command injection':    ['exec(', 'spawn(', 'Runtime.exec', 'subprocess', 'os.system', 'shell=True'],
@@ -238,73 +239,29 @@ jobs:
               return null;
             }
 
-            // 요약 테이블
-            const rows = realVulnerable.map(f => {
-              const emoji = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
-              const cvss  = f.cvssScore ? ` (CVSS ${f.cvssScore})` : '';
-              return `| ${emoji} **${f.severity}${cvss}** | \`${f.filename}\` | ${f.vulnerability} |`;
-            });
-
-            // 취약점별 라인 탐색 결과 미리 계산
+            // ── 취약점별 라인 탐색 ─────────────────────────────────────────
             const vulnLineMap = new Map();
             for (const f of realVulnerable) {
               const patchData   = targetFiles.find(t => t.filename === f.filename);
               const fileContent = files.find(t => t.filename === f.filename)?.content;
-              const found = findVulnLine(patchData?.patch, f.vulnerability, fileContent);
-              vulnLineMap.set(f.filename + f.vulnerability, found);
+              vulnLineMap.set(
+                f.filename + f.vulnerability,
+                findVulnLine(patchData?.patch, f.vulnerability, fileContent)
+              );
             }
 
-            // 상세 블록: inline 댓글이 없는 취약점만 summary에 표시 (중복 방지)
-            const detailBlocks = realVulnerable
-              .filter(f => {
-                const found = vulnLineMap.get(f.filename + f.vulnerability);
-                return !found || !found.inDiff;  // inline 달릴 것은 제외
-              })
-              .map(f => {
-                const emoji    = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
-                const cvssLine = f.cvssScore ? ` | CVSS ${f.cvssScore}` : '';
-                const cveLines = (f.cveReferences || []).slice(0, 3)
-                  .filter(c => c.cve_id && c.cve_id !== 'N/A')
-                  .map(c => `  - \`${c.cve_id}\` (${c.severity}, ${c.cwe_id})`)
-                  .join('\n');
-
-                const found    = vulnLineMap.get(f.filename + f.vulnerability);
-                const lineInfo = found
-                  ? `${found.line}번째 줄 ⚠️ PR 변경 범위 밖`
-                  : '줄 특정 불가';
-
-                return [
-                  `### ${emoji} ${f.vulnerability}`,
-                  `**파일:** \`${f.filename}\` | **심각도:** ${f.severity}${cvssLine}`,
-                  `**위치:** ${lineInfo}`,
-                  '',
-                  '**공격 시나리오:**',
-                  f.attack || '—',
-                  '',
-                  '**수정 방법:**',
-                  f.fix || '—',
-                  ...(cveLines ? ['', '**관련 CVE:**', cveLines] : []),
-                  '',
-                  '---',
-                ].join('\n');
-              });
-
-            // 파일별 인라인 리뷰 댓글 (diff 범위 내 라인만)
-            const reviewComments = [];
-            for (const f of realVulnerable) {
-              const found = vulnLineMap.get(f.filename + f.vulnerability);
-              if (!found || !found.inDiff) continue;  // diff 밖이면 인라인 생략
-
+            // ── 공통 댓글 본문 생성 ────────────────────────────────────────
+            function buildCommentBody(f, lineInfo) {
               const emoji    = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
               const cvssLine = f.cvssScore ? `\n**CVSS Score:** ${f.cvssScore}` : '';
               const cveLines = (f.cveReferences || []).slice(0, 3)
                 .filter(c => c.cve_id && c.cve_id !== 'N/A')
                 .map(c => `- \`${c.cve_id}\` (${c.severity}, ${c.cwe_id})`)
                 .join('\n');
-
-              const body = [
+              return [
                 `### ${emoji} [ScanOps] ${f.vulnerability}`,
-                `**심각도:** ${f.severity}${cvssLine}`,
+                `**파일:** \`${f.filename}\` | **심각도:** ${f.severity}${cvssLine}`,
+                `**위치:** ${lineInfo}`,
                 '',
                 '**공격 시나리오:**',
                 f.attack || '—',
@@ -313,28 +270,43 @@ jobs:
                 f.fix || '—',
                 ...(cveLines ? ['', '**관련 CVE:**', cveLines] : [])
               ].join('\n');
-
-              reviewComments.push({ path: f.filename, line: found.line, body });
             }
 
-            // summary: 테이블 + inline 없는 취약점만 상세 블록 표시
+            // ── 요약 테이블 (overview만) ───────────────────────────────────
+            const rows = realVulnerable.map(f => {
+              const emoji = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
+              const cvss  = f.cvssScore ? ` (CVSS ${f.cvssScore})` : '';
+              const found = vulnLineMap.get(f.filename + f.vulnerability);
+              const loc   = found
+                ? found.inDiff ? `${found.line}번째 줄` : `${found.line}번째 줄 (변경 범위 밖)`
+                : '줄 특정 불가';
+              return `| ${emoji} **${f.severity}${cvss}** | \`${f.filename}\` | ${f.vulnerability} | ${loc} |`;
+            });
+
             const summary = [
               '## 🔍 ScanOps 보안 스캔 결과',
               '',
               `> **${realVulnerable.length}개 취약점 발견** | 분석 파일: ${result.totalFiles}개 | 소요: ${result.elapsed}s`,
               '',
-              '| 심각도 | 파일 | 취약점 유형 |',
-              '|--------|------|------------|',
+              '| 심각도 | 파일 | 취약점 유형 | 위치 |',
+              '|--------|------|------------|------|',
               ...rows,
               '',
-              ...(detailBlocks.length > 0 ? ['---', '', ...detailBlocks] : []),
-              reviewComments.length > 0
-                ? '> 📌 변경된 라인에 인라인 댓글이 달려 있습니다.'
-                : '',
               '> Powered by [ScanOps](https://github.com/26Graduation)'
-            ].filter(l => l !== undefined).join('\n');
+            ].join('\n');
 
-            // PR Review 제출
+            // ── PR Review (인라인 댓글: diff 범위 내 취약점) ──────────────
+            const reviewComments = [];
+            for (const f of realVulnerable) {
+              const found = vulnLineMap.get(f.filename + f.vulnerability);
+              if (!found?.inDiff) continue;
+              reviewComments.push({
+                path: f.filename,
+                line: found.line,
+                body: buildCommentBody(f, `${found.line}번째 줄 (변경된 코드)`)
+              });
+            }
+
             try {
               await github.rest.pulls.createReview({
                 owner: context.repo.owner,
@@ -345,11 +317,27 @@ jobs:
                 comments: reviewComments
               });
             } catch (e) {
-              // 인라인 댓글 실패 시 일반 댓글로 폴백
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo:  context.repo.repo,
                 issue_number: context.payload.pull_request.number,
                 body: summary
+              });
+            }
+
+            // ── 개별 이슈 댓글: diff 범위 밖 또는 줄 특정 불가 취약점 ──────
+            for (const f of realVulnerable) {
+              const found = vulnLineMap.get(f.filename + f.vulnerability);
+              if (found?.inDiff) continue;  // 인라인으로 이미 달린 것 제외
+
+              const lineInfo = found
+                ? `${found.line}번째 줄 ⚠️ (PR 변경 범위 밖 — 기존 코드의 취약점)`
+                : '줄 특정 불가';
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: buildCommentBody(f, lineInfo)
               });
             }
