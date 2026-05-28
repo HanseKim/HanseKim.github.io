@@ -171,10 +171,69 @@ jobs:
               '> Powered by [ScanOps](https://github.com/26Graduation)'
             ].join('\n');
 
+            // ── 취약점 유형별 코드 키워드 (라인 매핑용) ───────────────────
+            const VULN_KEYWORDS = {
+              'xss':                  ['innerHTML', 'dangerouslySetInnerHTML', 'document.write', 'outerHTML', 'eval(', 'insertAdjacentHTML'],
+              'cross-site scripting': ['innerHTML', 'dangerouslySetInnerHTML', 'document.write', 'outerHTML', 'eval('],
+              'sql injection':        ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'executeQuery', 'createQuery', 'createNativeQuery', 'prepareStatement'],
+              'sql':                  ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'executeQuery'],
+              'command injection':    ['exec(', 'spawn(', 'Runtime.exec', 'subprocess', 'os.system', 'shell=True'],
+              'path traversal':       ['readFile', 'writeFile', '../', 'path.join', 'fs.open'],
+              'hardcoded':            ['password', 'secret', 'api_key', 'apikey', 'token', 'passwd', 'credential'],
+              'cors':                 ['Access-Control-Allow-Origin', 'cors', 'allowedOrigins', '*'],
+              'deserialization':      ['ObjectInputStream', 'readObject', 'pickle.loads', 'unserialize', 'yaml.load'],
+              'ssrf':                 ['fetch(', 'axios.get', 'WebClient', 'HttpClient', 'URL(', 'open('],
+              'xxe':                  ['DocumentBuilder', 'XMLReader', 'SAXParser', 'parseXML'],
+            };
+
+            /**
+             * patch에서 취약점과 관련된 실제 추가 라인 번호를 찾음.
+             * - '+' 로 시작하는 추가 라인만 검사
+             * - 취약점 유형 키워드와 매칭되는 라인 우선 반환
+             * - 매칭 실패 시 null 반환 (잘못된 라인에 댓글 달지 않음)
+             */
+            function findVulnLine(patch, vulnType) {
+              if (!patch) return null;
+
+              const vulnKey = vulnType?.toLowerCase() || '';
+              const keywords = Object.entries(VULN_KEYWORDS)
+                .filter(([k]) => vulnKey.includes(k))
+                .flatMap(([, v]) => v);
+
+              let lineNum   = 0;
+              let bestLine  = null;   // 키워드 매칭된 라인
+              let firstAdded = null;  // 폴백: 첫 번째 추가 라인
+
+              for (const raw of patch.split('\n')) {
+                // @@ -x,y +start,count @@ 헤더
+                const header = raw.match(/^@@ -\d+(?:,\d+)? \+(\d+)/);
+                if (header) {
+                  lineNum = parseInt(header[1]) - 1;
+                  continue;
+                }
+                if (raw.startsWith('-')) continue;  // 삭제 라인은 번호 안 올림
+                if (!raw.startsWith('\\')) lineNum++;
+
+                if (raw.startsWith('+')) {
+                  if (firstAdded === null) firstAdded = lineNum;
+                  if (keywords.length > 0) {
+                    const content = raw.slice(1).toLowerCase();
+                    if (keywords.some(k => content.includes(k.toLowerCase()))) {
+                      bestLine = lineNum;
+                      break;  // 첫 매칭 라인에서 중단
+                    }
+                  }
+                }
+              }
+
+              // 키워드 매칭 성공 → 해당 라인 / 실패 → null (잘못된 위치에 달지 않음)
+              return bestLine;
+            }
+
             // 파일별 인라인 리뷰 댓글
             const reviewComments = [];
             for (const f of vulnerable) {
-              const emoji   = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
+              const emoji    = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
               const cvssLine = f.cvssScore ? `\n**CVSS Score:** ${f.cvssScore}` : '';
               const cveLines = (f.cveReferences || []).slice(0, 3)
                 .map(c => `- \`${c.cve_id}\` (${c.severity}, ${c.cwe_id})`)
@@ -192,10 +251,14 @@ jobs:
                 ...(cveLines ? ['', '**관련 CVE:**', cveLines] : [])
               ].join('\n');
 
-              const line = f.diffLine || f.diff_line;
+              // patch에서 실제 취약점 관련 라인 찾기
+              const patchData = targetFiles.find(t => t.filename === f.filename);
+              const line = findVulnLine(patchData?.patch, f.vulnerability);
+
               if (line && line > 0) {
                 reviewComments.push({ path: f.filename, line, body });
               }
+              // line 못 찾으면 인라인 댓글 생략 → summary에만 표시
             }
 
             // PR Review 제출
