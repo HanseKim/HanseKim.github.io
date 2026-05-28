@@ -151,11 +151,77 @@ jobs:
               return;
             }
 
+            // 모델이 취약점 이름 대신 CVE 관련 문구를 뱉는 파싱 오류 필터
+            const INVALID_VULN = ['no relevant', 'cve', 'n/a', '—', 'none'];
+            const isValidVuln = v =>
+              v && !INVALID_VULN.some(bad => v.toLowerCase().includes(bad));
+
+            const realVulnerable = vulnerable.filter(f => isValidVuln(f.vulnerability));
+
+            if (realVulnerable.length === 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: [
+                  '## 🔒 ScanOps 보안 스캔 결과',
+                  '',
+                  '✅ **취약점이 발견되지 않았습니다.**',
+                  '',
+                  `분석 파일: **${result.totalFiles}개** | 소요 시간: ${result.elapsed}s`,
+                  '',
+                  '> Powered by [ScanOps](https://github.com/26Graduation)'
+                ].join('\n')
+              });
+              return;
+            }
+
             // 요약 테이블
-            const rows = vulnerable.map(f => {
+            const rows = realVulnerable.map(f => {
               const emoji = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
               const cvss  = f.cvssScore ? ` (CVSS ${f.cvssScore})` : '';
               return `| ${emoji} **${f.severity}${cvss}** | \`${f.filename}\` | ${f.vulnerability} |`;
+            });
+
+            // 취약점별 라인 탐색 결과 미리 계산
+            const vulnLineMap = new Map();
+            for (const f of realVulnerable) {
+              const patchData   = targetFiles.find(t => t.filename === f.filename);
+              const fileContent = files.find(t => t.filename === f.filename)?.content;
+              const found = findVulnLine(patchData?.patch, f.vulnerability, fileContent);
+              vulnLineMap.set(f.filename + f.vulnerability, found);
+            }
+
+            // 파일별 상세 내용 블록 (summary에 항상 포함)
+            const detailBlocks = realVulnerable.map(f => {
+              const emoji    = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
+              const cvssLine = f.cvssScore ? ` | CVSS ${f.cvssScore}` : '';
+              const cveLines = (f.cveReferences || []).slice(0, 3)
+                .filter(c => c.cve_id && c.cve_id !== 'N/A')
+                .map(c => `  - \`${c.cve_id}\` (${c.severity}, ${c.cwe_id})`)
+                .join('\n');
+
+              const found    = vulnLineMap.get(f.filename + f.vulnerability);
+              const lineInfo = found
+                ? found.inDiff
+                  ? `${found.line}번째 줄 (변경된 코드)`
+                  : `${found.line}번째 줄 ⚠️ PR 변경 범위 밖 — 이번 PR과 무관한 기존 취약점일 수 있습니다`
+                : '줄 특정 불가';
+
+              return [
+                `### ${emoji} ${f.vulnerability}`,
+                `**파일:** \`${f.filename}\` | **심각도:** ${f.severity}${cvssLine}`,
+                `**위치:** ${lineInfo}`,
+                '',
+                '**공격 시나리오:**',
+                f.attack || '—',
+                '',
+                '**수정 방법:**',
+                f.fix || '—',
+                ...(cveLines ? ['', '**관련 CVE:**', cveLines] : []),
+                '',
+                '---',
+              ].join('\n');
             });
 
             // summary는 reviewComments 결과를 반영해야 하므로 아래에서 생성
@@ -176,51 +242,62 @@ jobs:
             };
 
             /**
-             * patch에서 취약점과 관련된 실제 라인 번호를 찾음.
-             * - '+' 추가 라인과 ' ' 컨텍스트 라인(변경 없는 기존 코드) 모두 검색
-             * - 취약점 유형 키워드와 매칭되는 첫 번째 라인 반환
-             * - 매칭 실패 시 null 반환 (엉뚱한 라인에 달지 않음)
+             * patch(diff)에서 취약점 관련 라인 번호 탐색.
+             * @returns { line: number, inDiff: boolean } | null
+             *   - line    : 파일 내 실제 라인 번호
+             *   - inDiff  : true → diff 범위 내(인라인 댓글 가능)
+             *               false → diff 범위 밖(인라인 불가, 번호만 안내)
              */
-            function findVulnLine(patch, vulnType) {
-              if (!patch) return null;
-
+            function findVulnLine(patch, vulnType, fullContent) {
               const vulnKey  = vulnType?.toLowerCase() || '';
               const keywords = Object.entries(VULN_KEYWORDS)
                 .filter(([k]) => vulnKey.includes(k))
                 .flatMap(([, v]) => v);
 
-              let lineNum = 0;
+              if (keywords.length === 0) return null;
 
-              for (const raw of patch.split('\n')) {
-                // @@ -x,y +start,count @@ 헤더
-                const header = raw.match(/^@@ -\d+(?:,\d+)? \+(\d+)/);
-                if (header) {
-                  lineNum = parseInt(header[1]) - 1;
-                  continue;
-                }
-                if (raw.startsWith('-'))  continue;  // 삭제 라인은 번호 안 올림
-                if (!raw.startsWith('\\')) lineNum++;
+              // ── 1차: patch(diff) 안에서 탐색 ─────────────────────────────
+              if (patch) {
+                let lineNum = 0;
+                for (const raw of patch.split('\n')) {
+                  const header = raw.match(/^@@ -\d+(?:,\d+)? \+(\d+)/);
+                  if (header) { lineNum = parseInt(header[1]) - 1; continue; }
+                  if (raw.startsWith('-'))   continue;
+                  if (!raw.startsWith('\\')) lineNum++;
 
-                // '+' 추가 라인 OR ' ' 컨텍스트 라인 모두 검색
-                if (raw.startsWith('+') || raw.startsWith(' ')) {
-                  if (keywords.length > 0) {
+                  if (raw.startsWith('+') || raw.startsWith(' ')) {
                     const content = raw.slice(1).toLowerCase();
                     if (keywords.some(k => content.includes(k.toLowerCase()))) {
-                      return lineNum;
+                      return { line: lineNum, inDiff: true };
                     }
                   }
                 }
               }
 
-              return null;  // 매칭 실패 → 인라인 댓글 생략
+              // ── 2차: 전체 파일에서 탐색 (diff 밖) ───────────────────────
+              if (fullContent) {
+                const lines = fullContent.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                  const content = lines[i].toLowerCase();
+                  if (keywords.some(k => content.includes(k.toLowerCase()))) {
+                    return { line: i + 1, inDiff: false };
+                  }
+                }
+              }
+
+              return null;
             }
 
-            // 파일별 인라인 리뷰 댓글
+            // 파일별 인라인 리뷰 댓글 (diff 범위 내 라인만)
             const reviewComments = [];
-            for (const f of vulnerable) {
+            for (const f of realVulnerable) {
+              const found = vulnLineMap.get(f.filename + f.vulnerability);
+              if (!found || !found.inDiff) continue;  // diff 밖이면 인라인 생략
+
               const emoji    = SEVERITY_EMOJI[f.severity?.toUpperCase()] || '⚠️';
               const cvssLine = f.cvssScore ? `\n**CVSS Score:** ${f.cvssScore}` : '';
               const cveLines = (f.cveReferences || []).slice(0, 3)
+                .filter(c => c.cve_id && c.cve_id !== 'N/A')
                 .map(c => `- \`${c.cve_id}\` (${c.severity}, ${c.cwe_id})`)
                 .join('\n');
 
@@ -236,29 +313,25 @@ jobs:
                 ...(cveLines ? ['', '**관련 CVE:**', cveLines] : [])
               ].join('\n');
 
-              // patch에서 실제 취약점 관련 라인 찾기
-              const patchData = targetFiles.find(t => t.filename === f.filename);
-              const line = findVulnLine(patchData?.patch, f.vulnerability);
-
-              if (line && line > 0) {
-                reviewComments.push({ path: f.filename, line, body });
-              }
-              // line 못 찾으면 인라인 댓글 생략 → summary에만 표시
+              reviewComments.push({ path: f.filename, line: found.line, body });
             }
 
-            // reviewComments 완성 후 summary 생성 (인라인 댓글 유무 반영)
+            // reviewComments 완성 후 summary 생성 (상세 내용 항상 포함)
             const summary = [
               '## 🔍 ScanOps 보안 스캔 결과',
               '',
-              `> **${vulnerable.length}개 취약점 발견** | 분석 파일: ${result.totalFiles}개 | 소요: ${result.elapsed}s`,
+              `> **${realVulnerable.length}개 취약점 발견** | 분석 파일: ${result.totalFiles}개 | 소요: ${result.elapsed}s`,
               '',
               '| 심각도 | 파일 | 취약점 유형 |',
               '|--------|------|------------|',
               ...rows,
               '',
+              '---',
+              '',
+              ...detailBlocks,
               reviewComments.length > 0
-                ? '> 아래 파일의 해당 라인에 상세 리뷰 댓글이 달려 있습니다.'
-                : '> 변경된 라인에서 취약점 코드를 특정할 수 없어 인라인 댓글은 생략되었습니다.',
+                ? '> 📌 해당 파일의 취약점 라인에 인라인 댓글도 달려 있습니다.'
+                : '> ℹ️ 변경 범위 밖의 코드에서 발견된 취약점은 인라인 댓글이 생략됩니다.',
               '> Powered by [ScanOps](https://github.com/26Graduation)'
             ].join('\n');
 
