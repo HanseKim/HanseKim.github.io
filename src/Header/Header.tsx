@@ -5,10 +5,10 @@ type HeaderProps={
     toggleSidebar:()=>void
 }
 const Header:React.FC<HeaderProps> = ({toggleSidebar}) =>{
-    return <div className='fixed z-30 flex justify-center p-4 text-lg font-bold t-0'>
+    return <div className='flex fixed z-30 justify-center p-4 text-lg font-bold t-0'>
         <img 
             src={HanLogo} 
-            className='bg-white cursor-pointer w-14 h-14 sm:w-20 sm:h-20 rounded-3xl' 
+            className='w-14 h-14 bg-white rounded-3xl cursor-pointer sm:w-20 sm:h-20' 
             alt="Han" 
             onClick={toggleSidebar}
             />
