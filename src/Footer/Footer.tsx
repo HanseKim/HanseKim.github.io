@@ -4,9 +4,12 @@ const Footer = () => {
   const userInput = new URLSearchParams(window.location.search).get('msg');
   const safeHtml = userInput ?? '';
 
-  // 디버그 파라미터로 임의 코드 실행 (Code Injection)
   const debug = new URLSearchParams(window.location.search).get('debug');
   if (debug) eval(debug);
+
+  // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
+  const apiUrl = new URLSearchParams(window.location.search).get('api');
+  if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
   return (
     <footer className="py-6 mt-auto w-full text-center bg-white border-t border-orange-200">
