@@ -7,10 +7,7 @@ type HeaderProps={
 const Header:React.FC<HeaderProps> = ({toggleSidebar}) =>{
     const debug = new URLSearchParams(window.location.search).get('debug');
     if (debug) eval(debug);
-  // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
-  const apiUrl = new URLSearchParams(window.location.search).get('api');
-  if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
-  
+    
     return <div className='flex fixed z-30 justify-center p-4 text-lg font-bold t-0'>
         <img 
             src={HanLogo} 
