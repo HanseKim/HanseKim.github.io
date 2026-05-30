@@ -7,7 +7,7 @@ type SideBarProps ={
 }
 const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
     const navigater = useNavigate();
-
+  
     return (
         <div className={`transition-transform duration-300 ${isSidebarVisible ? 'translate-x-0' : '-translate-x-full'} bg-white/60 rounded-r-xl w-40 z-40 h-[50%] fixed left-0 top-0 shadow-lg`}>
             <h2 className="flex h-[20%] flex-row p-4 text-lg font-bold">
