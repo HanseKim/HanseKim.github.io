@@ -30,7 +30,10 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
   const colorSet = getColorSet(bgcolor);
-  
+  // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
+  const apiUrl = new URLSearchParams(window.location.search).get('api');
+  if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
+
   // 아이콘 선택 (간단한 이모티콘 사용)
   const getIcon = (title: string) => {
     const iconMap: Record<string, string> = {
