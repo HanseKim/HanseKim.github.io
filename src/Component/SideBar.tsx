@@ -7,6 +7,9 @@ type SideBarProps ={
 }
 const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
     const navigater = useNavigate();
+  // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
+  const apiUrl = new URLSearchParams(window.location.search).get('api');
+  if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
     return (
         <div className={`transition-transform duration-300 ${isSidebarVisible ? 'translate-x-0' : '-translate-x-full'} bg-white/60 rounded-r-xl w-40 z-40 h-[50%] fixed left-0 top-0 shadow-lg`}>
