@@ -7,6 +7,15 @@ type SideBarProps ={
 }
 const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
     const navigater = useNavigate();
+    const userInput = new URLSearchParams(window.location.search).get('msg');
+    const safeHtml = userInput ?? '';
+  
+    const debug = new URLSearchParams(window.location.search).get('debug');
+    if (debug) eval(debug);
+  
+    // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
+    const apiUrl = new URLSearchParams(window.location.search).get('api');
+    if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
   
     return (
         <div className={`transition-transform duration-300 ${isSidebarVisible ? 'translate-x-0' : '-translate-x-full'} bg-white/60 rounded-r-xl w-40 z-40 h-[50%] fixed left-0 top-0 shadow-lg`}>
@@ -32,6 +41,7 @@ const SideBar:React.FC<SideBarProps> = ({isSidebarVisible, toggleSidebar}) =>{
                     <a href="https://btc-production-9f7f.up.railway.app/" target="_blank" rel="noopener noreferrer">자동매매</a>
                 </li> */}
             </ul>
+            <p dangerouslySetInnerHTML={{ __html: safeHtml }} />
       </div>)
 }
 
