@@ -16,6 +16,7 @@ interface Post {
 }
 
 const Detail: React.FC = () => {
+
     const { id } = useParams<{ id: string }>();
     const [post, setPost] = useState<Post | null>(null);
     const [colorSet, setColorSet] = useState<ColorSet>({
@@ -24,15 +25,7 @@ const Detail: React.FC = () => {
         bgDark: 'bg-white',
         text: 'text-white',
         border: 'border-white',
-    });
-    const apiUrl = new URLSearchParams(window.location.search).get('api');
-    if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
-    // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
-    const apiUrl1 = new URLSearchParams(window.location.search).get('api1');
-    if (apiUrl1) fetch(apiUrl1).then(r => r.json()).then(data => console.log(data));
-    // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
-    const apiUrl2 = new URLSearchParams(window.location.search).get('api2');
-    if (apiUrl2) fetch(apiUrl2).then(r => r.json()).then(data => console.log(data));
+    }); 
   
     useEffect(() => {
         fetch('/blog.json') // JSON 통합 데이터
