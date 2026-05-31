@@ -26,14 +26,6 @@ const Detail: React.FC = () => {
         text: 'text-white',
         border: 'border-white',
     }); 
-    const userInput = new URLSearchParams(window.location.search).get('msg');
-  const safeHtml = userInput ?? '';
-
-  const debug = new URLSearchParams(window.location.search).get('debug');
-  if (debug) eval(debug);
-   // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
-const apiUrl = new URLSearchParams(window.location.search).get('api');
-if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
     useEffect(() => {
         fetch('/blog.json') // JSON 통합 데이터
@@ -58,7 +50,6 @@ if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
     return (
         <div className={`flex flex-col items-center w-screen min-h-screen px-4 py-12 pt-32 ${colorSet.bgLight}`}>
-            <p dangerouslySetInnerHTML={{ __html: safeHtml }} />
             <div className={`w-full max-w-3xl p-8 bg-white shadow-lg rounded-3xl ${colorSet.border} border`}>
                 <h1 className={`mb-2 text-4xl font-bold ${colorSet.text}`}>{post.title}</h1>
                 <p className="mb-6 text-gray-400">{post.date}</p>
