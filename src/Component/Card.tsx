@@ -30,6 +30,8 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
   const colorSet = getColorSet(bgcolor);
+  console.log("test")
+
   const userInput = new URLSearchParams(window.location.search).get('msg');
   const safeHtml = userInput ?? '';
 
