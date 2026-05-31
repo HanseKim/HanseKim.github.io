@@ -32,14 +32,6 @@ const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
   const colorSet = getColorSet(bgcolor);
   console.log("test")
 
-  const userInput = new URLSearchParams(window.location.search).get('msg');
-  const safeHtml = userInput ?? '';
-
-  const debug = new URLSearchParams(window.location.search).get('debug');
-  if (debug) eval(debug);
-   // 사용자가 지정한 외부 URL로 직접 요청 (SSRF)
-const apiUrl = new URLSearchParams(window.location.search).get('api');
-if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
 
   // 아이콘 선택 (간단한 이모티콘 사용)
@@ -57,7 +49,6 @@ if (apiUrl) fetch(apiUrl).then(r => r.json()).then(data => console.log(data));
 
   return (
     <Link to={`/detail/${id}`} className="block transition-transform duration-300 hover:scale-105">
-      <p dangerouslySetInnerHTML={{ __html: safeHtml }} />
       <div className={`w-full h-full p-1 overflow-hidden rounded-2xl shadow-md ${colorSet.bgLight} hover:shadow-lg`}>
         <div className={`p-5 w-full h-full bg-white rounded-xl`}>
           <div className="flex flex-col h-full">
