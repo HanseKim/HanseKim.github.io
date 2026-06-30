@@ -529,6 +529,175 @@
         "content": "※ 이 페이지에 사용된 앱 화면 이미지 및 UI는 디라이브 주식회사(D-Rive)의 자산이며, 포트폴리오 용도로만 사용했습니다."
       }
     ]
+  },
+  {
+    "id": 6,
+    "title": "FootPrint",
+    "date": "26.06 ~ 진행 중",
+    "bgcolor": "blue",
+    "sections": [
+      {
+        "type": "text",
+        "content": "\"일기장을 지도에 그려주는 앱 — 한 달에 지도 한 장\" FootPrint는 다녀온 곳을 일기로 남기면 Apple Photos 스타일의 3D 지구본 위에 핀으로 쌓이고, 핀을 누르면 편지처럼 펼쳐지는(rotateX) 일기 상세가 열리는 여행 일기 앱입니다. 한 달을 단위로 그 달의 일기를 핀으로 모아 보여주며, 온보딩 → 이메일 로그인 → 지도(홈) → 일기 작성·핀 찍기 → 편지 상세의 흐름으로 구성됩니다."
+      },
+      {
+        "type": "heading",
+        "content": "🛠️ 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "FrontEnd: React Native 0.85 (Expo SDK 56), TypeScript",
+          "지도: @rnmapbox/maps (Mapbox 3D 지구본 + Geocoding)",
+          "애니메이션: react-native-reanimated 4",
+          "상태관리: Zustand",
+          "BackEnd: Firebase (Auth / Firestore / Storage)",
+          "기타: react-native-svg, expo-image-picker, expo-location, AsyncStorage",
+          "빌드: expo prebuild (Dev Build, Expo Go 미지원)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🎨 디자인 / 브랜딩"
+      },
+      {
+        "type": "list",
+        "content": [
+          "메인 컬러: #2E83F5 (액션 블루)",
+          "포인트 컬러: #FF9F45 (선택 핀 앰버)",
+          "배경/편지지: #FBFAF7 (캔버스), #FFFDF6 (편지지)",
+          "폰트: 본문 시스템 산세리프, 편지 본문 세리프(Georgia)",
+          "톤: 라이트 모드, 따뜻한 종이 질감 + 블루 포인트, Apple Photos 풍 3D 지구본"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "💡 주요 기능"
+      },
+      {
+        "type": "list",
+        "content": [
+          "3D 지구본 지도(홈): Mapbox globe projection 위 입체 핀, 월/연 토글·이전/다음 월 탐색, 내 위치 표시",
+          "일기 작성 & 핀 드롭: 사진·장소·본문 작성 후 미니맵에서 핀 위치 지정, 제출 시 spring drop",
+          "편지형 상세 보기: 핀/카드 탭 시 rotateX 펼침 애니메이션으로 일기 상세, 수정·삭제",
+          "이메일/비밀번호 인증 + 클라우드 동기화 (Firestore users/{uid}/entries, Storage 사진 업로드)",
+          "최초 1회 온보딩 + 목록·지도·마이 하단 탭 네비게이션",
+          "Mapbox geocoding 기반 장소 검색"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧠 기술적 도전"
+      },
+      {
+        "type": "list",
+        "content": [
+          "Figma export가 핀을 흰 사각형 위에 매팅하던 문제를 flood-fill로 흰 배경을 제거해 투명 PNG로 교정",
+          "MarkerView → 네이티브 Mapbox SymbolLayer 전환으로 핀 렌더링 성능 개선",
+          "iOS에서 RN Modal 2개 중첩 시 'already presenting' 크래시를 absolute-fill 오버레이(zIndex 100/110) 재설계로 회피",
+          "Mapbox 토큰이 없으면 그라데이션 프리뷰 지구본, Firebase 미설정 시 로컬 시드 데이터로 폴백 — 키 없이도 크래시 없이 데모 가능",
+          "npm run firebase:setup 한 줄로 iOS 앱 등록·인증 활성화·.env 작성·Firestore 생성·규칙 배포 자동화"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "📦 프로젝트 정보"
+      },
+      {
+        "type": "list",
+        "content": [
+          "유형: 모바일 앱 (React Native + Expo, iOS/Android)",
+          "기간: 2026.06 ~ (초기 개발 단계)",
+          "구성: 개인 프로젝트",
+          "GitHub: https://github.com/HanseKim/FootPrint"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "ScanOps",
+    "date": "26.05 ~ 진행 중",
+    "bgcolor": "purple",
+    "sections": [
+      {
+        "type": "text",
+        "content": "\"PR만 올리면 자동으로 보안 취약점을 잡아주는 AI 보안 진단 서비스\" ScanOps는 소스코드·웹사이트를 입력받아 OWASP ZAP 동적 스캔과 보안 특화 파인튜닝 LLM(QLoRA)+RAG로 취약점을 탐지하고, CVE/CWE 매핑·CVSS 점수·한국어 수정 가이드와 PDF 리포트를 자동 생성하는 웹 보안 진단 SaaS입니다. GitHub App을 레포에 설치하면 PR을 올릴 때마다 XSS·인젝션·SSRF 등을 분석해 해당 코드 줄에 댓글로 알려주고, 대시보드에서 스캔 기록·리포트·구독을 관리합니다."
+      },
+      {
+        "type": "heading",
+        "content": "🛠️ 기술 스택"
+      },
+      {
+        "type": "list",
+        "content": [
+          "FrontEnd: React 19, TypeScript, Vite, Tailwind CSS v4, React Router v7, Recharts (FSD 아키텍처)",
+          "BackEnd: Java 17, Spring Boot 3.2.5, Spring Data JPA, WebFlux, Spring Security + OAuth2, JWT",
+          "AI 모델: Python, FastAPI, PyTorch, Transformers, PEFT(QLoRA), Qwen2.5-Coder (1.5B/3B/7B)",
+          "RAG/DB: Qdrant(벡터), Neo4j(그래프), sentence-transformers(bge-small-en), Ollama 서빙",
+          "인프라: Docker Compose, OWASP ZAP, DVWA, PostgreSQL, MariaDB",
+          "배포: Vercel(프론트), Railway(백엔드), AWS EC2(ZAP/모델)"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🎨 디자인 / 브랜딩"
+      },
+      {
+        "type": "list",
+        "content": [
+          "메인 컬러: #3182F6 (ScanOps 블루)",
+          "서브 컬러: #2563EB (hover), #191F28 (텍스트)",
+          "포인트 컬러: #8B5CF6 (퍼플, 코드 스캔), #03B26C (success), #F04452 (danger), #FE9800 (warning)",
+          "폰트: Pretendard (fallback: Apple SD Gothic Neo)",
+          "톤: 토스(Toss) 풍 라이트/미니멀 — 화이트 배경 + 블루 포인트, 둥근 카드"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "💡 주요 기능"
+      },
+      {
+        "type": "list",
+        "content": [
+          "DAST 웹 스캔: OWASP ZAP으로 실 사이트를 스캔해 취약점 탐지 (실 백엔드 연동)",
+          "SAST 코드 스캔 + AI 분석: 파인튜닝 LLM+RAG로 코드 취약점 탐지, CVE/CWE·CVSS·수정 코드 제시",
+          "GitHub App PR 자동 분석: PR 시 자동 스캔 후 취약 코드 줄에 한국어 리뷰 댓글",
+          "AI 라우팅 fallback: GPT → Claude → Gemini → 자체 모델 순으로 분석 (AiRouter)",
+          "PDF/XLS 리포트 자동 생성 및 대시보드 (스캔 기록·취약점 아코디언·모델 성과)",
+          "SaaS 구독 관리: GitHub OAuth 로그인, Free/Pro/Max 요금제·사용량 게이트"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "🧠 기술적 도전 & 성과"
+      },
+      {
+        "type": "list",
+        "content": [
+          "'탐지율 100%'의 함정 발견 — 안전 코드를 취약으로 오판하는 오탐률(FPR)을 정적 mitigation 분석 + LLM 하이브리드 게이트로 100% → 6%로 개선",
+          "데이터 누수(OWASP 학습/평가 중복) 차단을 위해 OWASP를 학습에서 배제하고 CVEfixes(실제 2024 CVE)로 zero-shot 재평가 — 과적합 착시 제거",
+          "OWASP 벤치마크: 그래프 하이브리드 F1 84.6, 재현율 100%, 정확도 81.8% (Grok-3 능가)",
+          "v5 오탐 필터: 정확도 93%·F1 92.9 (Grok-3와 동등), 응답 약 10배 빠름",
+          "자체 호스팅 구독제(₩0 / Pro ₩49,000 / Max ₩149,000) 운영 가능"
+        ]
+      },
+      {
+        "type": "heading",
+        "content": "📦 프로젝트 정보"
+      },
+      {
+        "type": "list",
+        "content": [
+          "유형: 웹 SaaS (풀스택) + GitHub App + AI 모델 서버 (멀티 레포)",
+          "기간: 2026.05 ~ (진행 중)",
+          "구성: 팀 프로젝트 (26Graduation 졸업 과제, 3인+)",
+          "GitHub: https://github.com/26Graduation",
+          "GitHub App: https://github.com/apps/scanops-security-scanner",
+          "Demo: https://scanops-frontend.vercel.app"
+        ]
+      }
+    ]
   }
 ]
 

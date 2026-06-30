@@ -30,13 +30,15 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ id, title, date, bgcolor }) => {
   const colorSet = getColorSet(bgcolor);
-  
+
   // 아이콘 선택 (간단한 이모티콘 사용)
   const getIcon = (title: string) => {
     const iconMap: Record<string, string> = {
       '취뽀해': '💼',
       '너의 하루는': '✏️',
       '냉장고를 부탁해': '🍽️',
+      'FootPrint': '📍',
+      'ScanOps': '🔒',
       'MoiGO': moigoLogo,
       '리얼뷰(WebView)': realviewLogo,
     };
