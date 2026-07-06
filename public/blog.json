@@ -538,7 +538,7 @@
     "sections": [
       {
         "type": "text",
-        "content": "\"일기장을 지도에 그려주는 앱 — 한 달에 지도 한 장\" FootPrint는 다녀온 곳을 일기로 남기면 Apple Photos 스타일의 3D 지구본 위에 핀으로 쌓이고, 핀을 누르면 편지처럼 펼쳐지는(rotateX) 일기 상세가 열리는 여행 일기 앱입니다. 한 달을 단위로 그 달의 일기를 핀으로 모아 보여주며, 온보딩 → 이메일 로그인 → 지도(홈) → 일기 작성·핀 찍기 → 편지 상세의 흐름으로 구성됩니다."
+        "content": "\"지도 위에 남기는 여행 일기 — 한 달에 지도 한 장\" FootPrint는 다녀온 곳을 사진·글과 함께 남기면 Mapbox 지구본 지도 위에 핀으로 쌓이고, 핀을 누르면 편지처럼 펼쳐지는 일기 상세가 열리는 여행 일기 앱입니다. 핀은 발자국 모양 또는 그날의 사진으로 표시할 수 있고, 월·연·기간 단위로 모아 보거나 색으로 분류할 수 있어요. 미끄러지는 글래스 하단 네비게이션, 지도 카드를 인스타 스토리로 내보내기, 매일 저녁 일기 알림 등 '아기자기한 다이어리' 경험에 집중했습니다. 온보딩 → 이메일 로그인 → 지도(홈) → 일기 작성·핀 찍기 → 편지 상세의 흐름으로 구성됩니다."
       },
       {
         "type": "heading",
@@ -560,11 +560,12 @@
         "type": "list",
         "content": [
           "FrontEnd: React Native 0.85 (Expo SDK 56), TypeScript",
-          "지도: @rnmapbox/maps (Mapbox 3D 지구본 + Geocoding)",
-          "애니메이션: react-native-reanimated 4",
+          "지도: @rnmapbox/maps (Mapbox globe projection + Geocoding)",
+          "애니메이션/제스처: react-native-reanimated 4, react-native-gesture-handler",
           "상태관리: Zustand",
-          "BackEnd: Firebase (Auth / Firestore / Storage)",
-          "기타: react-native-svg, expo-image-picker, expo-location, AsyncStorage",
+          "BackEnd: Firebase (Auth / Firestore) + Cloudinary (이미지 호스팅)",
+          "알림: expo-notifications (매일 정해진 시각 로컬 알림)",
+          "기타: react-native-svg, expo-image-picker, expo-location, expo-blur, AsyncStorage",
           "빌드: expo prebuild (Dev Build, Expo Go 미지원)"
         ]
       },
@@ -575,11 +576,10 @@
       {
         "type": "list",
         "content": [
-          "메인 컬러: #2E83F5 (액션 블루)",
-          "포인트 컬러: #FF9F45 (선택 핀 앰버)",
-          "배경/편지지: #FBFAF7 (캔버스), #FFFDF6 (편지지)",
-          "폰트: 본문 시스템 산세리프, 편지 본문 세리프(Georgia)",
-          "톤: 라이트 모드, 따뜻한 종이 질감 + 블루 포인트, Apple Photos 풍 3D 지구본"
+          "메인 컬러: #2E83F5 (액션 블루), 파스텔 블루 #7FA8DE 포인트",
+          "배경/편지지: #FAF6EF (따뜻한 종이 캔버스), #FFFDF6 (편지지)",
+          "폰트: 본문 Pretendard, 다이어리 제목·라벨 Gaegu(손글씨)",
+          "톤: 라이트 모드, 미니멀 다이어리 룩 + 따뜻한 종이 질감, 글래스/블러 UI, Mapbox 지구본"
         ]
       },
       {
@@ -589,12 +589,15 @@
       {
         "type": "list",
         "content": [
-          "3D 지구본 지도(홈): Mapbox globe projection 위 입체 핀, 월/연 토글·이전/다음 월 탐색, 내 위치 표시",
-          "일기 작성 & 핀 드롭: 사진·장소·본문 작성 후 미니맵에서 핀 위치 지정, 제출 시 spring drop",
-          "편지형 상세 보기: 핀/카드 탭 시 rotateX 펼침 애니메이션으로 일기 상세, 수정·삭제",
-          "이메일/비밀번호 인증 + 클라우드 동기화 (Firestore users/{uid}/entries, Storage 사진 업로드)",
-          "최초 1회 온보딩 + 목록·지도·마이 하단 탭 네비게이션",
-          "Mapbox geocoding 기반 장소 검색"
+          "지도(홈): Mapbox globe projection 위 핀, 발자국 핀 / 사진 핀 선택, 월·연·기간 토글, 색상 필터, 여행 경로 선, 내 위치, 지도 테마(블루마블·미드나잇·위성·라이트)",
+          "일기 작성 & 핀 드롭: 사진 여러 장(드래그로 순서 변경)·장소 검색·본문 작성 후 미니맵에서 핀 위치 지정, 제출 시 spring drop",
+          "편지형 상세 보기: 핀/카드 탭 시 펼침 애니메이션으로 일기 상세, 수정·삭제",
+          "목록: 카드형 + 1열/2열 그리드 토글(설정 유지), 월별 커버",
+          "미끄러지는 글래스 하단 네비게이션: 하나의 하이라이트가 탭 사이를 스프링 이동, 드래그로도 전환",
+          "스토리로 내보내기: 지도 카드를 이미지로 캡처해 인스타 스토리 공유",
+          "매일 저녁 일기 알림: 로컬 푸시(마이페이지에서 on/off)",
+          "이메일/비밀번호 인증 + 클라우드 동기화 (Firestore users/{uid}/entries) + Cloudinary 사진 호스팅",
+          "Mapbox geocoding 기반 장소 검색, 최초 1회 온보딩"
         ]
       },
       {
@@ -604,11 +607,12 @@
       {
         "type": "list",
         "content": [
-          "Figma export가 핀을 흰 사각형 위에 매팅하던 문제를 flood-fill로 흰 배경을 제거해 투명 PNG로 교정",
-          "MarkerView → 네이티브 Mapbox SymbolLayer 전환으로 핀 렌더링 성능 개선",
-          "iOS에서 RN Modal 2개 중첩 시 'already presenting' 크래시를 absolute-fill 오버레이(zIndex 100/110) 재설계로 회피",
-          "Mapbox 토큰이 없으면 그라데이션 프리뷰 지구본, Firebase 미설정 시 로컬 시드 데이터로 폴백 — 키 없이도 크래시 없이 데모 가능",
-          "npm run firebase:setup 한 줄로 iOS 앱 등록·인증 활성화·.env 작성·Firestore 생성·규칙 배포 자동화"
+          "신규 Firebase 프로젝트에서 Storage가 Blaze(유료) 요금제를 요구 → 무료 Cloudinary(unsigned, base64 data URI 업로드)로 전환해 재설치·타 기기에서도 사진이 유지되도록 개선",
+          "스토리 내보내기: Mapbox 스냅샷이 오버레이 마커(MarkerView)를 포함하지 않는 문제를, 사진 핀을 getPointInView로 화면 좌표에 투영해 캡처 직전 오버레이로 합성하여 해결",
+          "미끄러지는 글래스 네비게이션: reanimated + gesture-handler로 실시간 인디케이터 이동 + 드래그 스냅, 아이콘 색 크로스페이드 구현",
+          "MarkerView → 네이티브 Mapbox SymbolLayer 전환으로 핀 렌더링 성능 개선 (사진 핀만 MarkerView 사용)",
+          "iOS에서 RN Modal 2개 중첩 시 'already presenting' 크래시를 absolute-fill 오버레이(zIndex 레이어링) 재설계로 회피",
+          "Mapbox 토큰이 없으면 그라데이션 프리뷰 지구본, Firebase 미설정 시 로컬 시드 데이터로 폴백 — 키 없이도 크래시 없이 데모 가능"
         ]
       },
       {
@@ -618,8 +622,8 @@
       {
         "type": "list",
         "content": [
-          "유형: 모바일 앱 (React Native + Expo, iOS/Android)",
-          "기간: 2026.06 ~ (초기 개발 단계)",
+          "유형: 모바일 앱 (React Native + Expo, iOS 우선)",
+          "기간: 2026.06 ~ (App Store 출시 준비 중)",
           "구성: 개인 프로젝트",
           "GitHub: https://github.com/HanseKim/FootPrint"
         ]
