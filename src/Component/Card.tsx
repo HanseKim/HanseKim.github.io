@@ -17,7 +17,7 @@
 // }
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getColorSet } from '../colorUtils/Color';
+import { getColorSet } from '../lib/color';
 import moigoLogo from '../image/moigo_logo.png';
 import realviewLogo from '../image/realview_logo.svg';
 
