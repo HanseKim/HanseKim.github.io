@@ -1,0 +1,136 @@
+---
+title: "FootPrint"
+date: "26.07 ~ 진행 중"
+bgcolor: "blue"
+icon: "📍"
+order: 6
+---
+
+import Gallery from '../../components/Gallery.astro';
+
+"내가 쓴 일기가 지도처럼 펼쳐져 있다면 어떨까?"라는 생각에서 출발한 여행 일기 앱입니다. 사진·위치·일기·이동 경로를 함께 남기면 Mapbox 지구본 위에 핀으로 쌓이고, 핀을 누르면 그 자리에서 편지처럼 자라나는 일기 상세가 열립니다. 실제 일기장처럼 목록으로도 훑어볼 수 있어야 한다고 생각해 카드형 리스트와 연간 리캡까지 함께 만들었습니다. 핀은 발자국 모양 또는 그날의 사진으로 표시할 수 있고, 월·연·기간 단위로 모아 보거나 색으로 분류할 수 있습니다. 미끄러지는 글래스 하단 네비게이션, 지도 카드를 인스타 스토리로 내보내기, 친구의 발자국 지도 보기, 매일 저녁 일기 알림 등 '아기자기한 다이어리' 경험에 집중했습니다. 기획·디자인·구현·배포·스토어 등록까지 전부 직접 담당한 개인 프로젝트입니다.
+
+## 📱 앱 화면
+
+<Gallery srcs={['/footprint/footprint1.png', '/footprint/footprint2.png', '/footprint/footprint3.png', '/footprint/footprint4.png']} />
+
+## 🛠️ 기술 스택
+
+- App: React Native 0.85 (Expo SDK 56), TypeScript 6 (strict: true)
+- 지도: @rnmapbox/maps 10 (globe projection + Mapbox Geocoding)
+- 애니메이션/제스처: react-native-reanimated 4, react-native-gesture-handler, expo-blur
+- 상태관리: Zustand 5 — 서버 캐시 라이브러리 없이 스토어 + lib/ 레이어에서 직접 동기화
+- BackEnd: Firebase (Auth / Firestore) + Cloudinary (이미지 호스팅)
+- 인증: 이메일·비밀번호 + Apple 로그인 (expo-apple-authentication + expo-crypto nonce)
+- 알림: expo-notifications (매일 정해진 시각 로컬 알림)
+- 기타: react-native-svg, react-native-view-shot(스토리 내보내기), expo-image-picker, expo-location, expo-media-library, AsyncStorage
+- 빌드/자동화: expo prebuild 기반 Dev Build(Mapbox 네이티브 모듈 때문에 Expo Go 미지원), scripts/firebase-setup.mjs(Firestore 룰·인덱스 세팅), scripts/generate-pins.mjs(sharp로 핀 에셋 일괄 생성)
+
+## 🗂️ 파일 구조
+
+```text
+FootPrint/
+├── App.tsx                    앱 진입점 (폰트 로드, 스토어 하이드레이션, Root 마운트)
+├── app.config.js              Expo 설정 (Mapbox 플러그인, 권한, 환경변수 주입)
+├── babel.config.js            reanimated 4 → worklets 플러그인은 반드시 마지막
+├── tsconfig.json              strict: true, "@/*" → "./src/*" 절대경로 alias
+├── eas.json                   EAS Build 프로파일 (dev-client / preview / production)
+├── firestore.rules            사용자별 entries, 친구·공유 일기 접근 규칙
+│
+├── src/
+│   ├── screens/               화면 단위 (12)
+│   │   ├── Root.tsx           화면 전환 허브 — 스토어의 view/writing/readerId로 레이어 스위칭
+│   │   ├── MapScreen.tsx      홈. 지구본 + 핀 + 월/연/기간 토글 + 필터
+│   │   ├── ListScreen.tsx     카드형 목록, 1열·2열 그리드 토글
+│   │   ├── WriteSheet.tsx     일기 작성 (사진 다중선택 → 장소검색 → 미니맵 핀 드롭)
+│   │   ├── ProfileScreen.tsx  마이페이지, 알림 on/off, 지도 테마
+│   │   ├── AuthScreen.tsx     이메일 로그인 + Apple 로그인
+│   │   ├── Onboarding.tsx     최초 1회 온보딩
+│   │   ├── FriendMapScreen.tsx / FriendsScreen.tsx / FriendRequestsScreen.tsx
+│   │   └── SharedDiaryScreen.tsx / SharedInvitesScreen.tsx
+│   │
+│   ├── components/            UI 블록 (28)
+│   │   ├── GlobeMap.tsx       Mapbox globe. SymbolLayer 핀 + 클러스터 + 경로 선
+│   │   ├── IsoPin.tsx / PhotoPin.tsx / Pin.tsx / MeMarker.tsx
+│   │   ├── LetterModal.tsx    누른 핀 자리에서 자라나는 편지형 상세
+│   │   ├── BottomNav.tsx      미끄러지는 글래스 네비 (스프링 이동 + 드래그 전환)
+│   │   ├── ExportMap.tsx / ExportSheet.tsx / StoryCard.tsx   인스타 스토리 내보내기
+│   │   ├── MiniMap.tsx / WhenPicker.tsx / PhotoReorder.tsx / PhotoCarousel.tsx
+│   │   ├── RecapSheet.tsx / ColorFilter.tsx / RangePickerModal.tsx / OptionSheet.tsx
+│   │   └── Txt.tsx, ui.tsx, icons.tsx, PaperTexture.tsx      공용 프리미티브
+│   │
+│   ├── lib/                   외부 I/O 격리 레이어 (9) — 화면에서 SDK 직접 호출 금지
+│   │   ├── firebase.ts        SDK 초기화 (미설정 시 null 반환 → seed 폴백)
+│   │   ├── auth.ts            이메일 / Apple 인증
+│   │   ├── entries.ts         Firestore users/{uid}/entries CRUD
+│   │   ├── friends.ts / sharedEntries.ts
+│   │   ├── cloudinary.ts      unsigned 업로드 (base64 data URI)
+│   │   ├── geocode.ts         Mapbox Geocoding 장소 검색
+│   │   ├── notifications.ts   매일 저녁 로컬 알림 스케줄링
+│   │   └── months.ts          월/연/기간 스코프 계산
+│   │
+│   ├── store/useAppStore.ts   Zustand 단일 스토어 (화면 상태·데이터·UI 상태 통합)
+│   ├── theme/tokens.ts        색·타이포·radius·shadow·모션의 단일 진실 공급원
+│   ├── types.ts               Entry, LatLng, PinColor, MapTheme 등 도메인 타입
+│   └── data/seed.ts           Firebase 미설정 시 폴백 시드 데이터
+│
+├── assets/
+│   ├── fonts/                 Pretendard(본문) + Gaegu(손글씨 제목·라벨)
+│   └── pin-{blue,pink,yellow,mint,green,purple,red}.png   scripts로 일괄 생성
+│
+├── scripts/
+│   ├── firebase-setup.mjs     Firestore 룰·인덱스 배포 자동화
+│   └── generate-pins.mjs      sharp로 핀 에셋 색상별 일괄 생성
+│
+├── landing/                   정적 랜딩 페이지 (Vercel, 히어로에 실제 Mapbox 지구본)
+└── docs/cardnews/             인스타 카드뉴스 코드 생성 (build.mjs → render.mjs → PNG)
+```
+
+react-navigation을 쓰지 않고, useAppStore의 view / writing / readerId / viewingFriend 같은 상태로 화면을 전환하는 구조를 선택했습니다. 화면 전환 자체가 애니메이션(핀 → 편지 펼침, 네비 인디케이터 이동)과 얽혀 있어서, 네비게이터의 화면 스택보다 상태를 단일 소스로 두고 레이어를 겹치는 쪽이 제어하기 쉬웠습니다. tsconfig의 @/* → src/* 절대경로 alias와 npm run typecheck(tsc --noEmit)를 타입 게이트로 두고 있고, Reanimated 4가 react-native-worklets로 동작해 babel 플러그인을 맨 마지막에 배치해야 하는 제약은 babel.config.js에 주석으로 명시해 두었습니다.
+
+## 🎨 디자인 / 브랜딩
+
+- 메인 컬러: #2E83F5 (액션 블루), 파스텔 블루 #7FA8DE 포인트
+- 배경/편지지: #FAF6EF (따뜻한 종이 캔버스), #FFFDF6 (편지지)
+- 폰트: 본문 Pretendard, 다이어리 제목·라벨 Gaegu(손글씨)
+- 톤: 라이트 모드, 미니멀 다이어리 룩 + 따뜻한 종이 질감, 글래스/블러 UI, Mapbox 지구본
+- theme/tokens.ts를 색·타이포·radius·shadow·모션의 단일 진실 공급원으로 두고, 앱 → 랜딩 → 인스타 카드뉴스까지 같은 토큰으로 브랜드를 일관되게 유지
+
+## 💡 주요 기능
+
+- 지도(홈): Mapbox globe projection 위 핀, 발자국 핀 / 사진 핀 선택, 월·연·기간 토글, 색상 필터, 여행 경로 선, 내 위치, 지도 테마 4종(블루마블·미드나잇·위성·라이트)
+- 핀 클러스터링: 핀이 겹치면 클러스터 버블로 합치고, 탭하면 getClusterExpansionZoom으로 펼침
+- 일기 작성 & 핀 드롭: 사진 다중 선택(드래그로 순서 변경) → 장소 검색 → 본문 작성 → 미니맵에서 핀 위치 지정, 제출 시 spring drop
+- 편지형 상세 보기: 탭한 핀의 화면 좌표(rect)를 넘겨 누른 자리에서 카드가 자라나고, 닫으면 그 자리로 되돌아가는 확대 애니메이션
+- 목록 / 리캡: 카드형 + 1열·2열 그리드 토글(설정 유지), 월별 커버, 연간 리캡 시트
+- 미끄러지는 글래스 하단 네비게이션: 하이라이트 하나가 탭 사이를 스프링 이동, 드래그로도 전환, 아이콘 색 크로스페이드
+- 스토리로 내보내기: 지도 카드를 이미지로 캡처해 인스타 스토리 공유
+- 친구 / 공유 일기: 친구 요청(보낸·받은), 친구의 발자국 지도 보기(본문·사진은 비공개), 일기 공유·초대
+- 매일 저녁 일기 알림: 로컬 푸시(마이페이지에서 on/off)
+- 이메일·비밀번호 + Apple 로그인, 클라우드 동기화(Firestore users/\{uid\}/entries), Cloudinary 사진 호스팅, 최초 1회 온보딩
+- 랜딩 페이지: Vercel 정적 배포 + GEO/SEO 대응, 히어로에 앱과 같은 Mapbox 지구본을 실제로 띄워 핀을 누르면 앱과 동일한 편지 상세가 열리도록 구현
+
+## 🧠 기술적 도전
+
+- Firebase Storage → Cloudinary 전환: 신규 Firebase 프로젝트에서 Storage가 Blaze(유료) 요금제를 요구 → 무료 Cloudinary(unsigned, base64 data URI 업로드)로 전환해 재설치·타 기기에서도 사진이 유지되도록 개선
+- 스토리 내보내기의 마커 누락: Mapbox 스냅샷이 오버레이 마커(MarkerView)를 포함하지 않는 문제를, 사진 핀을 getPointInView로 화면 좌표에 투영해 캡처 직전 오버레이로 합성하는 방식으로 해결
+- 핀 렌더링 성능: 핀마다 React 뷰를 띄우는 MarkerView → 네이티브 SymbolLayer + GeoJSON 소스로 전환. 흰 박스 아티팩트가 사라지고 핀이 늘어나도 프레임이 유지됨 (사진 핀만 MarkerView 유지)
+- iOS Modal 중첩 크래시: RN Modal 2개가 겹칠 때 나는 'already presenting' 크래시를 absolute-fill 오버레이 + zIndex 레이어링 재설계로 회피 — react-navigation을 쓰지 않기로 한 결정과도 이어짐
+- Android 런치 크래시: Mapbox Standard 스타일에 클라이언트 localizeLabels를 넘기면 Android에서 RuntimeException으로 앱이 죽는 문제를 발견. 기본 테마가 Standard였기 때문에 실행 즉시 크래시 → 클래식 스타일에만 해당 prop을 넘기도록 분기
+- 키 없이도 굴러가는 폴백: Mapbox 토큰이 없으면 그라데이션 프리뷰 지구본, Firebase 미설정 시 로컬 시드 데이터로 폴백 — 키 없이 클론해도 크래시 없이 데모 가능
+- 랜딩 지구본의 반응형 프레이밍: 줌을 고정값으로 박아두니 좁은 화면에서 구가 컨테이너보다 커져 '확대된 평면 지도'처럼 잘려 보였음 → 컨테이너 크기에서 기준 줌을 역산(ResizeObserver)하고, 데스크톱은 ⌘+스크롤일 때만 확대되게 해 페이지 스크롤을 뺏지 않도록 조정
+
+## 🌱 이 프로젝트로 발전한 방향
+
+- 네이티브 모듈(Mapbox)·서드파티 SDK(Firebase, Cloudinary)가 얽힌 환경에서 '내 코드 문제인가 / 네이티브 레이어 문제인가'를 분리해 좁혀 들어가는 디버깅 습관이 붙음
+- 무료 티어·플랫폼 정책(Firebase Storage 유료화, Apple 심사, Mapbox 할당량) 같은 기술 외적 제약이 아키텍처를 바꾼다는 걸 체감하고, 대안을 찾아 갈아끼우는 판단을 여러 번 함
+- 앱 → 랜딩 → 카드뉴스까지 하나의 디자인 토큰으로 브랜드를 일관되게 유지하는 작업을 해봄
+- 남은 과제: 테스트 코드가 아직 없고 tsc --noEmit 타입 체크로만 회귀를 막고 있음. Mapbox·Firebase처럼 네이티브/외부 의존이 큰 영역이라 어디부터 붙일지가 다음 과제
+
+## 📦 프로젝트 정보
+
+- 유형: 모바일 앱 (React Native + Expo, iOS 우선) + 랜딩 페이지
+- 기간: 2026.07 ~ 진행 중 (App Store 출시 준비 중)
+- 구성: 개인 프로젝트 (기획·디자인·구현·배포·스토어 등록 전담)
+- Landing: https://footprint-amber.vercel.app
+- GitHub: https://github.com/HanseKim/FootPrint

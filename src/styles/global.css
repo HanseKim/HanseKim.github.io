@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-moigo-light: #fff7ed;
+  --color-moigo-medium: #fed7aa;
+  --color-moigo-dark: #fdba74;
+  --color-moigo: #ff6b00;
+
+  --color-realview-light: #fff3ee;
+  --color-realview-medium: #fff3ee;
+  --color-realview-dark: #ff6d4d;
+  --color-realview: #ff6d4d;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

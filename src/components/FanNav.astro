@@ -1,0 +1,141 @@
+---
+// 로고를 누르면 뒤에 겹쳐 있던 항목들이 오른쪽으로 쫘악 펼쳐진다.
+// 항목은 slot으로 받는다. <li>를 몇 개 넣든 스크립트가 순번(--i)을 자동으로 매긴다.
+interface Props {
+  logo?: string;
+  alt?: string;
+  /** 트리거 중심에서 항목까지의 거리 */
+  step?: string;
+  /** 항목 사이의 벌어지는 각도. 0deg면 일직선으로 밀려난다 */
+  spread?: string;
+  /** 부채꼴 전체가 향하는 방향. 0deg는 오른쪽, 90deg는 아래쪽 */
+  tilt?: string;
+  /** 트리거 지름 */
+  size?: string;
+  /** 펼쳐지는 항목 한 변의 길이 */
+  itemSize?: string;
+  /** 밝은 배경에서도 쓰도록 트리거 색을 뒤집을 수 있다 */
+  triggerBg?: string;
+  markColor?: string;
+}
+
+const {
+  logo = '/icon.svg',
+  alt = '메뉴 열기',
+  step = '12rem',
+  spread = '34deg',
+  tilt = '0deg',
+  size = '7rem',
+  itemSize = '6rem',
+  triggerBg = '#F3E8EB',
+  markColor = '#433E49',
+} = Astro.props;
+---
+
+<div
+  class="fan relative inline-block"
+  style={`--step: ${step}; --spread: ${spread}; --tilt: ${tilt}; --size: ${size}; --item: ${itemSize}`}
+>
+  <!-- 펼쳐지는 항목들. 트리거 뒤에 전부 겹쳐 있다가 밖으로 밀려난다 -->
+  <ul class="fan-list absolute inset-0 m-0 p-0 list-none">
+    <slot />
+  </ul>
+
+  <button
+    type="button"
+    class="fan-trigger relative z-10 rounded-full cursor-pointer shadow-[0_12px_30px_rgb(0_0_0/0.28)]"
+    style={`width: var(--size); height: var(--size); padding: calc(var(--size) / 4); background-color: ${triggerBg}`}
+    aria-expanded="false"
+    aria-label={alt}
+  >
+    <span
+      class="block w-full h-full trigger-mark"
+      style={`--logo: url('${logo}'); background-color: ${markColor}`}></span>
+  </button>
+</div>
+
+<style>
+  /* slot으로 들어온 <li>는 부모 컴포넌트 소유라 :global()로 잡아야 한다 */
+  .fan-list > :global(li) {
+    position: absolute;
+    /* 트리거 한가운데에서 출발하도록 맞춘다 */
+    left: calc((var(--size) - var(--item)) / 2);
+    top: calc((var(--size) - var(--item)) / 2);
+    width: var(--item);
+    height: var(--item);
+    opacity: 0;
+    transform: translateX(0) scale(0.4);
+    pointer-events: none;
+    /* 튕기듯 펼쳐지는 이징 */
+    transition:
+      transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 200ms ease-out;
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  .fan.is-open .fan-list > :global(li) {
+    opacity: 1;
+    /* 항목들을 오른쪽 방향 부채꼴로 편다.
+       가운데 항목이 0도가 되도록 (--i - (총개수-1)/2) 로 중심을 맞추고,
+       밀어낸 뒤 같은 각도만큼 되돌려 타일 자체는 똑바로 세운다. */
+    --angle: calc(var(--tilt, 0deg) + (var(--i, 0) - (var(--total, 1) - 1) / 2) * var(--spread));
+    transform: rotate(var(--angle)) translateX(var(--step)) rotate(calc(var(--angle) * -1)) scale(1);
+    pointer-events: auto;
+  }
+
+  /* 로고도 mask로 떠내서 팔레트 색을 입힌다 (icon.svg가 검정 단색이라) */
+  .trigger-mark {
+    background-color: #433e49;
+    -webkit-mask: var(--logo) no-repeat center / contain;
+    mask: var(--logo) no-repeat center / contain;
+  }
+
+  .fan-trigger {
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .fan.is-open .fan-trigger {
+    transform: rotate(-8deg) scale(0.92);
+  }
+
+  /* 접힐 때는 바깥쪽 항목부터 사라져야 자연스럽다 */
+  .fan:not(.is-open) .fan-list > :global(li) {
+    transition-delay: calc((var(--total, 1) - var(--i, 0) - 1) * 45ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fan-list > :global(li),
+    .fan-trigger {
+      transition-duration: 1ms;
+      transition-delay: 0ms;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.fan').forEach((fan) => {
+    const trigger = fan.querySelector<HTMLButtonElement>('.fan-trigger');
+    const items = fan.querySelectorAll<HTMLElement>('.fan-list > li');
+    if (!trigger) return;
+
+    // 순번을 코드로 매겨두면 항목을 늘리거나 줄여도 마크업을 손댈 필요가 없다
+    items.forEach((item, i) => item.style.setProperty('--i', String(i)));
+    fan.style.setProperty('--total', String(items.length));
+
+    const setOpen = (open: boolean) => {
+      fan.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', String(open));
+    };
+
+    trigger.addEventListener('click', () => {
+      setOpen(!fan.classList.contains('is-open'));
+    });
+
+    // 바깥을 누르거나 Esc를 누르면 접는다
+    document.addEventListener('click', (e) => {
+      if (!fan.contains(e.target as Node)) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+  });
+</script>

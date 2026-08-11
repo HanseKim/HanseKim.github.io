@@ -1,0 +1,38 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** 페이지 바탕색. 오버스크롤 영역까지 덮으려면 body에 있어야 한다 */
+  bg?: string;
+}
+
+const { title, description = '프로젝트 포트폴리오', bg = '#433E49' } = Astro.props;
+const ogUrl = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* SVG를 먼저 두고, 지원하지 않는 브라우저는 PNG로 떨어진다 */}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={ogUrl} />
+  </head>
+
+  <body style={`background-color: ${bg}`}>
+    <slot />
+  </body>
+</html>

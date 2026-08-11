@@ -1,0 +1,21 @@
+---
+// 기존 Detail.tsx의 image 섹션 렌더링을 그대로 옮긴 것.
+interface Props {
+  srcs: string[];
+  alt?: string;
+}
+
+const { srcs, alt = '스크린샷' } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-4 justify-center my-6">
+  {srcs.map((src, i) => (
+    <img
+      src={src}
+      alt={`${alt} ${i + 1}`}
+      loading="lazy"
+      class="max-w-full h-auto rounded-lg shadow-md"
+      style="max-width: 300px"
+    />
+  ))}
+</div>

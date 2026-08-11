@@ -1,0 +1,8 @@
+dist
+.astro
+node_modules
+package-lock.json
+
+# 글 본문은 데이터라 건드리지 않는다.
+# 프리티어가 마크다운을 재배치하면 코드 펜스나 \{ \} 이스케이프가 깨질 수 있다.
+src/content
