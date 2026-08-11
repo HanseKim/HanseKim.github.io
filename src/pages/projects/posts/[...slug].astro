@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getColorSet } from '../../../lib/color';
+
+// 정적 사이트라 빌드 시점에 어떤 URL을 만들지 여기서 알려준다.
+// post.id는 확장자를 뗀 파일명이다. footprint.mdx → /projects/posts/footprint/
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+// 프로젝트별 색은 상단 띠에만 남겨서 팔레트와 부딪히지 않게 한다
+const c = getColorSet(post.data.bgcolor);
+---
+
+<BaseLayout title={post.data.title} description={post.data.date} bg="#F3E8EB">
+  <main class="px-6 py-14 min-h-screen">
+    <div class="mx-auto max-w-3xl">
+      <a
+        href="/projects/"
+        class="inline-flex gap-2 items-center text-sm font-medium text-[#7A6E79] hover:text-[#433E49]"
+      >
+        <span aria-hidden="true">←</span> 프로젝트 목록
+      </a>
+
+      <article
+        class="overflow-hidden mt-6 bg-white rounded-3xl border border-[#E6D5CB] shadow-[0_10px_28px_rgb(67_62_73/0.10)]"
+      >
+        <div class={`h-1.5 ${c.bgDark}`}></div>
+
+        <div class="p-8 sm:p-12">
+          <header class="pb-8 mb-10 border-b border-[#E6D5CB]">
+            <div class="flex gap-4 items-center">
+              <div class="flex justify-center items-center w-14 h-14 rounded-2xl bg-[#DBC1AD]">
+                {
+                  post.data.iconImage ? (
+                    <img src={post.data.iconImage} alt="" class="object-contain w-8 h-8" />
+                  ) : (
+                    <span class="text-3xl">{post.data.icon}</span>
+                  )
+                }
+              </div>
+              <div>
+                <h1 class="text-3xl font-bold text-[#433E49] sm:text-4xl">{post.data.title}</h1>
+                <p class="mt-1 text-sm text-[#7A6E79]">{post.data.date || '소개'}</p>
+              </div>
+            </div>
+          </header>
+
+          {/* 본문 스타일은 typography 플러그인의 prose가 담당한다 */}
+          <div class="max-w-none prose prose-lg doc">
+            <Content />
+          </div>
+        </div>
+      </article>
+
+      <a
+        href="/projects/"
+        class="block mt-10 text-sm text-center text-[#7A6E79] hover:text-[#433E49]"
+      >
+        ← 다른 프로젝트 보기
+      </a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  /* prose의 색만 팔레트에 맞춰 갈아끼운다. 나머지 여백·크기는 플러그인 기본값 그대로 */
+  .doc {
+    --tw-prose-body: #4a444f;
+    --tw-prose-headings: #433e49;
+    --tw-prose-bold: #433e49;
+    --tw-prose-links: #433e49;
+    --tw-prose-bullets: #c7b3a6;
+    --tw-prose-counters: #7a6e79;
+    --tw-prose-quotes: #433e49;
+    --tw-prose-quote-borders: #dbc1ad;
+    --tw-prose-hr: #e6d5cb;
+    --tw-prose-captions: #7a6e79;
+    --tw-prose-code: #433e49;
+    --tw-prose-pre-bg: #433e49;
+    --tw-prose-pre-code: #f3e8eb;
+    --tw-prose-th-borders: #dbc1ad;
+    --tw-prose-td-borders: #e6d5cb;
+  }
+
+  /* 파일 트리를 담은 코드블록은 줄이 길어서 가로로 넘칠 수 있다.
+     본문이 밝아진 만큼 코드블록만 어둡게 남겨 대비를 준다. */
+  .doc :global(pre) {
+    overflow-x: auto;
+    /* Shiki가 배경색을 인라인 스타일로 박아넣어서 !important가 아니면 안 밀린다 */
+    background-color: #433e49 !important;
+    border-radius: 1rem;
+  }
+
+  .doc :global(h2) {
+    scroll-margin-top: 2rem;
+  }
+</style>
